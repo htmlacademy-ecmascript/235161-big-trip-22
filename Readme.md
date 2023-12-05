@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Никита Самсонов](https://up.htmlacademy.ru/ecmascript/22/user/235161).
-* Наставник: `Неизвестно`.
+* Наставник: [Евгений Лепёшкин](https://htmlacademy.ru/profile/spearance).
 
 ---
 
