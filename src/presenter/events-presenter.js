@@ -5,6 +5,8 @@ import EventView from '../view/event.js';
 import EventAddView from '../view/event-add.js';
 import EventEditView from '../view/event-edit.js';
 
+const EVENTS_TO_RENDER = 3;
+
 export default class EventsPresenter {
   eventListComponent = new EventsListView();
 
@@ -19,7 +21,7 @@ export default class EventsPresenter {
     render(new EventEditView(), this.eventListComponent.getElement());
     render(new EventAddView(), this.eventListComponent.getElement());
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < EVENTS_TO_RENDER; i++) {
       render(new EventView(), this.eventListComponent.getElement());
     }
   }
