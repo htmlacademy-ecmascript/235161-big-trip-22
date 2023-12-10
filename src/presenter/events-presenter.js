@@ -5,24 +5,26 @@ import EventView from '../view/event.js';
 import EventAddView from '../view/event-add.js';
 import EventEditView from '../view/event-edit.js';
 
-const EVENTS_TO_RENDER = 3;
-
 export default class EventsPresenter {
   eventListComponent = new EventsListView();
 
-  constructor({eventsContainer}) {
+  constructor({eventsContainer, eventsModel}) {
     this.eventsContainer = eventsContainer;
+    this.eventsModel = eventsModel;
   }
 
   init() {
+    this.events = [...this.eventsModel.getEvents()];
+    //console.log(this.events);
+
     render(new TripSortView, this.eventsContainer);
     render(this.eventListComponent, this.eventsContainer);
 
     render(new EventEditView(), this.eventListComponent.getElement());
     render(new EventAddView(), this.eventListComponent.getElement());
 
-    for (let i = 0; i < EVENTS_TO_RENDER; i++) {
-      render(new EventView(), this.eventListComponent.getElement());
+    for (let i = 0; i < this.events.length; i++) {
+      render(new EventView({event: this.events[i]}), this.eventListComponent.getElement());
     }
   }
 }
