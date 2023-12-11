@@ -4,7 +4,7 @@ const mockOffers = [
     'offers': [
       {
         'id': 1,
-        'title': 'Upgrade to a business class',
+        'title': 'Upgrade to a comfort',
         'price': 120
       },
       {
@@ -20,11 +20,11 @@ const mockOffers = [
       {
         'id': 1,
         'title': 'Upgrade to a business class',
-        'price': 120
+        'price': 500
       },
       {
         'id': 2,
-        'title': 'Choose music',
+        'title': 'Choose food',
         'price': 10
       },
     ]
