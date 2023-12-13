@@ -1,7 +1,7 @@
 import {createElement} from '../render.js';
-import { DATE_FORMAT, formatDate } from '../utils.js';
+import { DATE_FORMAT, formatDate, calculateDuration } from '../utils.js';
 
-function createEventTemplate(event, allOffers) {
+function createEventTemplate(event, availableOffers, destinations) {
   const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type} = event;
 
   const dateTime = formatDate(dateFrom, DATE_FORMAT.yearMonthDay);
@@ -10,9 +10,11 @@ function createEventTemplate(event, allOffers) {
   const fullDateEnd = formatDate(dateTo, DATE_FORMAT.fullDate);
   const eventStartTime = formatDate(dateFrom, DATE_FORMAT.hoursMinutes);
   const eventEndTime = formatDate(dateTo, DATE_FORMAT.hoursMinutes);
+  const eventDestination = destinations.find((destinationElement) => destinationElement.id === destination);
   const favoriteClass = isFavorite
     ? 'event__favorite-btn--active'
     : '';
+  const duration = calculateDuration(dateFrom, dateTo);
 
   return (
     `<li class="trip-events__item">
@@ -25,7 +27,7 @@ function createEventTemplate(event, allOffers) {
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
 
-      <h3 class="event__title">${type} ${destination}</h3>
+      <h3 class="event__title">${type} ${eventDestination.name}</h3>
 
       <div class="event__schedule">
         <p class="event__time">
@@ -33,7 +35,7 @@ function createEventTemplate(event, allOffers) {
           &mdash;
           <time class="event__end-time" datetime="${fullDateEnd}">${eventEndTime}</time>
         </p>
-        <p class="event__duration">30M</p>
+        <p class="event__duration">${duration}</p>
       </div>
 
       <p class="event__price">
@@ -43,7 +45,7 @@ function createEventTemplate(event, allOffers) {
       <h4 class="visually-hidden">Offers:</h4>
 
       <ul class="event__selected-offers">
-      ${allOffers.offers.map((offer) => {
+      ${availableOffers.offers.map((offer) => {
       if (offers.includes(offer.id)) {
         return (
           `<li class="event__offer">
@@ -73,13 +75,14 @@ function createEventTemplate(event, allOffers) {
 }
 
 export default class EventView {
-  constructor({event, offers}) {
+  constructor({event, offers, destinations}) {
     this.event = event;
     this.offers = offers;
+    this.destinations = destinations;
   }
 
   getTemplate() {
-    return createEventTemplate(this.event, this.offers);
+    return createEventTemplate(this.event, this.offers, this.destinations);
   }
 
   getElement() {
