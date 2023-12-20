@@ -1,12 +1,10 @@
-import {render} from '../framework/render.js';
+import {render, replace} from '../framework/render.js';
 import EventsListView from '../view/events-list.js';
 import TripSortView from '../view/trip-sort.js';
 import EventView from '../view/event.js';
 import EventEditView from '../view/event-edit.js';
 
 export default class EventsPresenter {
-  #eventListComponent = new EventsListView();
-
   #eventsContainer = null;
   #eventsModel = null;
 
@@ -14,6 +12,8 @@ export default class EventsPresenter {
     this.#eventsContainer = eventsContainer;
     this.#eventsModel = eventsModel;
   }
+
+  #eventListComponent = new EventsListView();
 
   #events = [];
   #offers = [];
@@ -27,10 +27,49 @@ export default class EventsPresenter {
     render(new TripSortView, this.#eventsContainer);
     render(this.#eventListComponent, this.#eventsContainer);
 
-    render(new EventEditView({event: this.#events[1], offers: this.#offers, destinations: this.#destinations}), this.#eventListComponent.element);
-
     for (let i = 0; i < this.#events.length; i++) {
-      render(new EventView({event: this.#events[i], offers: this.#offers, destinations: this.#destinations}), this.#eventListComponent.element);
+      this.#renderEvent(this.#events[i]);
     }
+  }
+
+  #renderEvent(point) {
+
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceFormToEvent();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
+
+    const eventComponent = new EventView({
+      event: point,
+      offers: this.#offers,
+      destinations: this.#destinations,
+      onRoullupClick: () => {
+        replaceEventToForm();
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
+    });
+
+    const eventEditComponent = new EventEditView({
+      event: point,
+      offers: this.#offers,
+      destinations: this.#destinations,
+      onFormSubmit: () => {
+        replaceFormToEvent();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    });
+
+    function replaceEventToForm() {
+      replace(eventEditComponent, eventComponent);
+    }
+
+    function replaceFormToEvent() {
+      replace(eventComponent, eventEditComponent);
+    }
+
+    render(eventComponent, this.#eventListComponent.element);
   }
 }
