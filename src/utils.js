@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import Duration from 'dayjs/plugin/duration';
 
 const MILLISECONDS_AMOUNT_IN_DAY = 86400000;
 const MILLISECONDS_AMOUNT_IN_HOUR = 3600000;
@@ -9,7 +10,7 @@ const DATE_FORMAT = {
   hoursMinutes: 'HH:mm',
   editFormFormat: 'MM/DD/YY HH:mm'
 };
-const Duration = require('dayjs/plugin/duration');
+
 dayjs.extend(Duration);
 
 function getRandomArrayElement(items) {
@@ -25,14 +26,6 @@ function formatDate(dateFrom, format) {
 }
 
 function calculateDuration(startDate, endDate) {
-  /*
-  const minutes = Math.ceil(dayjs(endDate).diff(dayjs(startDate), 'minutes', true));
-  const totalHours = parseInt(minutes / 60, 10);
-  const totalMins = dayjs().minute(minutes).$m;
-  const duration = totalHours === 0 ? `${totalMins}M` : `${totalHours}H ${totalMins}M`;
-
-  return duration;
-  */
   const eventDuration = dayjs(endDate).diff(startDate);
   let durationFormat = 'DD[D] HH[H] mm[M]';
 
