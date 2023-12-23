@@ -33,9 +33,7 @@ export default class EventsPresenter {
     render(new TripSortView, this.#eventsContainer);
     render(this.#eventListComponent, this.#eventsContainer);
 
-    for (let i = 0; i < this.#events.length; i++) {
-      this.#renderEvent(this.#events[i]);
-    }
+    this.#events.forEach((event) => this.#renderEvent(event));
   }
 
   #renderEvent(point) {

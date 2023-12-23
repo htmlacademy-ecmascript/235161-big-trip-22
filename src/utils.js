@@ -4,7 +4,7 @@ import Duration from 'dayjs/plugin/duration';
 const MILLISECONDS_AMOUNT_IN_DAY = 86400000;
 const MILLISECONDS_AMOUNT_IN_HOUR = 3600000;
 const DATE_FORMAT = {
-  dayMonth: 'D MMM',
+  dayMonth: 'MMM D',
   yearMonthDay: 'YYYY-MM-D',
   fullDate: 'YYYY-MM-DTHH:mm',
   hoursMinutes: 'HH:mm',
