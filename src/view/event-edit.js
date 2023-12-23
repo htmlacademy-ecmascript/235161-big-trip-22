@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {EVENT_TYPES} from '../const.js';
-import {DATE_FORMAT, formatDate} from '../utils.js';
+import {DATE_FORMAT, formatDate} from '../utils/event-utils.js';
 
 function createEventEditTemplate(event, availableOffers, destinations) {
   const {basePrice, dateFrom, dateTo, destination, offers, type} = event;

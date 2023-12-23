@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { DATE_FORMAT, formatDate, calculateDuration } from '../utils.js';
+import {DATE_FORMAT, formatDate, calculateDuration} from '../utils/event-utils.js';
 
 function createEventTemplate(event, allOffers, destinations) {
   const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type} = event;
