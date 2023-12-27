@@ -1,4 +1,5 @@
 import {render, /*replace,*/ RenderPosition} from '../framework/render.js';
+import { updateItem } from '../utils/common.js';
 import EventsListView from '../view/events-list.js';
 import TripSortView from '../view/trip-sort.js';
 //import EventView from '../view/event.js';
@@ -42,6 +43,11 @@ export default class EventsPresenter {
     this.#renderEventsBoard();
   }
 
+  #handleEventChange = (updatedEvent) => {
+    this.#events = updateItem(this.#events, updatedEvent);
+    this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
+  };
+
   #renderEventsList() {
     render(this.#eventListComponent, this.#eventsContainer, RenderPosition.BEFOREEND);
     this.#events.forEach((event) => this.#renderEvent(event));
@@ -60,6 +66,7 @@ export default class EventsPresenter {
       eventsListContainer: this.#eventListComponent.element,
       offers: this.#offers,
       destinations: this.#destinations,
+      onDataChange: this.#handleEventChange,
     });
 
     eventPresenter.init(event);

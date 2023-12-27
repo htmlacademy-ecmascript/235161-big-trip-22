@@ -11,14 +11,18 @@ export default class EventPresenter {
   #eventComponent = null;
   #eventEditComponent = null;
   #eventsListContainer = null;
+
   #event = null;
   #offers = [];
   #destinations = [];
 
-  constructor({eventsListContainer, offers, destinations}) {
+  #handleDataChange = null;
+
+  constructor({eventsListContainer, offers, destinations, onDataChange}) {
     this.#eventsListContainer = eventsListContainer;
     this.#offers = offers;
     this.#destinations = destinations;
+    this.#handleDataChange = onDataChange;
   }
 
   init(event) {
@@ -32,6 +36,7 @@ export default class EventPresenter {
       offers: this.#offers,
       destinations: this.#destinations,
       onRoullupClick: this.#handleRollupClick,
+      onFavoriteClick: this.#handleFavoriteClick,
     });
 
     this.#eventEditComponent = new EventEditView({
@@ -84,7 +89,12 @@ export default class EventPresenter {
     this.#replaceEventToForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({...this.#event, isFavorite: !this.#event.isFavorite});
+  };
+
+  #handleFormSubmit = (event) => {
+    this.#handleDataChange(event);
     this.#replaceFormToEvent();
   };
 }
