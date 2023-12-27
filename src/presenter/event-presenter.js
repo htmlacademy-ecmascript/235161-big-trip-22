@@ -24,6 +24,9 @@ export default class EventPresenter {
   init(event) {
     this.#event = event;
 
+    const previousEventComponent = this.#eventComponent;
+    const previousEventEditComponent = this.#eventEditComponent;
+
     this.#eventComponent = new EventView({
       event: this.#event,
       offers: this.#offers,
@@ -38,7 +41,26 @@ export default class EventPresenter {
       onFormSubmit: this.#handleFormSubmit,
     });
 
-    render(this.#eventComponent, this.#eventsListContainer);
+    if (previousEventComponent === null || previousEventEditComponent === null) {
+      render(this.#eventComponent, this.#eventsListContainer);
+      return;
+    }
+
+    if (this.#eventsListContainer.contains(previousEventComponent.element)) {
+      replace(this.#eventComponent, previousEventComponent);
+    }
+
+    if (this.#eventsListContainer.contains(previousEventEditComponent.element)) {
+      replace(this.#eventEditComponent, previousEventEditComponent);
+    }
+
+    remove(previousEventComponent);
+    remove(previousEventEditComponent);
+  }
+
+  destroy() {
+    remove(this.#eventComponent);
+    remove(this.#eventEditComponent);
   }
 
   #replaceEventToForm() {

@@ -17,6 +17,7 @@ export default class EventsPresenter {
   #events = [];
   #offers = [];
   #destinations = [];
+  #eventPresenters = new Map();
 
   constructor({eventsContainer, eventsModel}) {
     this.#eventsContainer = eventsContainer;
@@ -62,6 +63,7 @@ export default class EventsPresenter {
     });
 
     eventPresenter.init(event);
+    this.#eventPresenters.set(event.id, eventPresenter);
     /*
     const escKeyDownHandler = (evt) => {
       if (evt.key === 'Escape') {
@@ -101,6 +103,11 @@ export default class EventsPresenter {
 
     render(eventComponent, this.#eventListComponent.element);
     */
+  }
+
+  #clearEventsList() {
+    this.#eventPresenters.forEach((presenter) => presenter.destroy());
+    this.#eventPresenters.clear();
   }
 
   #renderEventsBoard() {

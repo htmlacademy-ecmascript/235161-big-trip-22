@@ -58,6 +58,44 @@ const mockDestinations = [
       }
     ]
   },
+  {
+    id: 4,
+    description: 'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis.',
+    name: 'Tokyo',
+    pictures: [
+      {
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
+        description: 'Tokyo'
+      },
+      {
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
+        description: 'Tokyo'
+      },
+      {
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
+        description: 'Tokyo'
+      }
+    ]
+  },
+  {
+    id: 5,
+    description: 'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis.',
+    name: 'Seoul',
+    pictures: [
+      {
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
+        description: 'Seoul'
+      },
+      {
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
+        description: 'Seoul'
+      },
+      {
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
+        description: 'Seoul'
+      }
+    ]
+  },
 ];
 
 export {mockDestinations};

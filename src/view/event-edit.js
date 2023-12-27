@@ -91,7 +91,7 @@ function createEventEditTemplate(event, availableOffers, destinations) {
           <div class="event__photos-container">
             <div class="event__photos-tape">
     ${eventDestination.pictures.map((picture) => (
-      `<img class="event__photo" src="${picture.src}" alt="Event photo">`
+      `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`
     )).join('')}
             </div>
           </div>
