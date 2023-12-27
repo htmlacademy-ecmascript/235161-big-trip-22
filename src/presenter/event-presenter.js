@@ -12,17 +12,20 @@ export default class EventPresenter {
   #eventEditComponent = null;
   #eventsListContainer = null;
 
+  #mode = Mode.DEFAULT;
   #event = null;
   #offers = [];
   #destinations = [];
 
   #handleDataChange = null;
+  #handleModeChange = null;
 
-  constructor({eventsListContainer, offers, destinations, onDataChange}) {
+  constructor({eventsListContainer, offers, destinations, onDataChange, onModeChange}) {
     this.#eventsListContainer = eventsListContainer;
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(event) {
@@ -51,11 +54,11 @@ export default class EventPresenter {
       return;
     }
 
-    if (this.#eventsListContainer.contains(previousEventComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#eventComponent, previousEventComponent);
     }
 
-    if (this.#eventsListContainer.contains(previousEventEditComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#eventEditComponent, previousEventEditComponent);
     }
 
@@ -68,14 +71,23 @@ export default class EventPresenter {
     remove(this.#eventEditComponent);
   }
 
+  resetView() {
+    if(this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToEvent();
+    }
+  }
+
   #replaceEventToForm() {
     replace(this.#eventEditComponent, this.#eventComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replaceFormToEvent() {
     replace(this.#eventComponent, this.#eventEditComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {
