@@ -47,6 +47,7 @@ export default class EventPresenter {
       offers: this.#offers,
       destinations: this.#destinations,
       onFormSubmit: this.#handleFormSubmit,
+      onFormRollupClick: this.#handleFormRollupClick,
     });
 
     if (previousEventComponent === null || previousEventEditComponent === null) {
@@ -107,6 +108,10 @@ export default class EventPresenter {
 
   #handleFormSubmit = (event) => {
     this.#handleDataChange(event);
+    this.#replaceFormToEvent();
+  };
+
+  #handleFormRollupClick = () => {
     this.#replaceFormToEvent();
   };
 }
