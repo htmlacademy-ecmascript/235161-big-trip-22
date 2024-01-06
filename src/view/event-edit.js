@@ -91,7 +91,7 @@ function createEventEditTemplate(event, availableOffers, destinations) {
           <div class="event__photos-container">
             <div class="event__photos-tape">
     ${eventDestination.pictures.map((picture) => (
-      `<img class="event__photo" src="${picture.src}" alt="Event photo">`
+      `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`
     )).join('')}
             </div>
           </div>
@@ -107,16 +107,21 @@ export default class EventEditView extends AbstractView {
   #offers = null;
   #destinations = null;
   #handleFormSubmit = null;
+  #handleFormRollupBtnClick = null;
 
-  constructor({event, offers, destinations, onFormSubmit}) {
+  constructor({event, offers, destinations, onFormSubmit, onFormRollupClick}) {
     super();
     this.#event = event;
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleFormRollupBtnClick = onFormRollupClick;
 
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#formRollupBtnClickHandler);
   }
 
   get template() {
@@ -125,6 +130,11 @@ export default class EventEditView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#event);
+  };
+
+  #formRollupBtnClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormRollupBtnClick(this.#event);
   };
 }

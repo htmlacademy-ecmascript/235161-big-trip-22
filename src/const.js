@@ -7,4 +7,12 @@ const FilterTypes = {
   PAST: 'past',
 };
 
-export {EVENT_TYPES, FilterTypes};
+const SortTypes = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
+};
+
+export {EVENT_TYPES, FilterTypes, SortTypes};
