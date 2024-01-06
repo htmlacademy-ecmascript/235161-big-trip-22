@@ -44,4 +44,35 @@ function isEventInTheFuture(date) {
   return date && dayjs(date).isAfter(dayjs(), 'D');
 }
 
-export {DATE_FORMAT, formatDate, calculateDuration, isEventInThePast, isEventInThePresent, isEventInTheFuture};
+function getWeightForNullDate(dateA, dateB) {
+  if (dateA === null && dateB === null) {
+    return 0;
+  }
+
+  if (dateA === null) {
+    return 1;
+  }
+
+  if (dateB === null) {
+    return -1;
+  }
+
+  return null;
+}
+
+function sortEventsByDay(eventA, eventB) {
+  const weight = getWeightForNullDate(eventA.dateFrom, eventB.dateFrom);
+  return weight ?? dayjs(eventA.dateFrom).diff(dayjs(eventB.dateFrom));
+}
+
+function sortEventsByPrice(eventA, eventB) {
+  return eventB.basePrice - eventA.basePrice;
+}
+
+function sortEventsByDuration(eventA, eventB) {
+  const eventDurationA = dayjs(eventA.dateTo).diff(eventA.dateFrom);
+  const eventDurationB = dayjs(eventB.dateTo).diff(eventB.dateFrom);
+  return eventDurationB - eventDurationA;
+}
+
+export {DATE_FORMAT, formatDate, calculateDuration, isEventInThePast, isEventInThePresent, isEventInTheFuture, sortEventsByDay, sortEventsByPrice, sortEventsByDuration};

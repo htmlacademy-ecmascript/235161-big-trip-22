@@ -13,7 +13,7 @@ function createTripSortItemTemplate(sortType) {
         data-sort-type="${sortType}"
         ${sortType === SortTypes.DAY ? 'checked' : ''}
         ${sortType === SortTypes.EVENT || sortType === SortTypes.OFFERS ? 'disabled' : ''}>
-      <label class="trip-sort__btn" for="sort-${sortType}">${sortType}</label>
+      <label class="trip-sort__btn" for="sort-${sortType}" data-sort-type="${sortType}">${sortType}</label>
     </div>`
   );
 }
@@ -57,19 +57,25 @@ function createTripSortTemplate() {
   );
 }
 export default class TripSortView extends AbstractView {
+
+  #handleSortTypeChange = null;
+
+  constructor({onSortTypeChange}) {
+    super();
+    this.#handleSortTypeChange = onSortTypeChange;
+
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+  }
+
   get template() {
     return createTripSortTemplate();
   }
-  /*
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+
+  #sortTypeChangeHandler = (evt) => {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
     }
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }*/
+    this.#handleSortTypeChange(evt.target.dataset.sortType);
+  };
 }
