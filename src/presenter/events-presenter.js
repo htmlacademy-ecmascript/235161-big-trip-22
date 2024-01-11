@@ -12,7 +12,6 @@ export default class EventsPresenter {
   #eventsModel = null;
 
   #eventListComponent = new EventsListView();
-  //#tripSortComponent = new TripSortView();
   #tripSortComponent = null;
   #noEventsComponent = new EmptyView();
 
@@ -20,10 +19,9 @@ export default class EventsPresenter {
   #offers = [];
   #destinations = [];
   #eventPresenters = new Map();
-  //Тут новая фигня для сортировки
   #currentSortType = SortTypes.DAY;
   #sourcedEvents = [];
-  //Конец новой фигни
+
   constructor({eventsContainer, eventsModel}) {
     this.#eventsContainer = eventsContainer;
     this.#eventsModel = eventsModel;
@@ -33,11 +31,8 @@ export default class EventsPresenter {
     this.#events = [...this.#eventsModel.events];
     this.#offers = [...this.#eventsModel.offers];
     this.#destinations = [...this.#eventsModel.destinations];
-    //Новая фигня для сортировки
     this.#sourcedEvents = [...this.#eventsModel.events];
-    //this.#events.sort(sortEventsByDay);
-    //Конец новой фигни
-    this.#renderTripSort();
+
     this.#renderEventsBoard();
   }
 
@@ -47,9 +42,8 @@ export default class EventsPresenter {
 
   #handleEventChange = (updatedEvent) => {
     this.#events = updateItem(this.#events, updatedEvent);
-    //Новая фигня для сортировки
     this.#sourcedEvents = updateItem(this.#sourcedEvents, updatedEvent);
-    //Конец новой фигни
+
     this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
   };
 
@@ -131,7 +125,7 @@ export default class EventsPresenter {
       return;
     }
 
-    //this.#renderTripSort();
+    this.#renderTripSort();
     this.#renderEventsList();
   }
 
