@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {EVENT_TYPES} from '../const.js';
 import {DATE_FORMAT, formatDate} from '../utils/event-utils.js';
 
@@ -73,8 +73,13 @@ function createEventEditTemplate(event, availableOffers, destinations) {
           <div class="event__available-offers">
     ${eventChosenTypeOffers ? eventChosenTypeOffers.offers.map((offer) => (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${offer.id}" type="checkbox" name="event-offer-luggage" ${offers.includes(offer.id) ? 'checked' : ''}>
-        <label class="event__offer-label" for="event-offer-luggage-${offer.id}">
+        <input
+          class="event__offer-checkbox visually-hidden"
+          id="event-offer-${offer.title.toLowerCase().replaceAll(' ', '-')}-${offer.id}"
+          type="checkbox"
+          name="event-offer-${offer.title.toLowerCase().replaceAll(' ', '-')}"
+          ${offers.includes(offer.id) ? 'checked' : ''}>
+        <label class="event__offer-label" for="event-offer-${offer.title.toLowerCase().replaceAll(' ', '-')}-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
             &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
@@ -102,8 +107,7 @@ function createEventEditTemplate(event, availableOffers, destinations) {
   );
 }
 
-export default class EventEditView extends AbstractView {
-  #event = null;
+export default class EventEditView extends AbstractStatefulView {
   #offers = null;
   #destinations = null;
   #handleFormSubmit = null;
@@ -111,30 +115,83 @@ export default class EventEditView extends AbstractView {
 
   constructor({event, offers, destinations, onFormSubmit, onFormRollupClick}) {
     super();
-    this.#event = event;
+    this._setState(event);
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormRollupBtnClick = onFormRollupClick;
+    this._restoreHandlers();
+  }
 
+  get template() {
+    return createEventEditTemplate(this._state, this.#offers, this.#destinations);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit(this._state);
+  };
+
+  #formRollupBtnClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormRollupBtnClick(this._state);
+  };
+
+  #eventTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    this.updateElement({
+      type: evt.target.value,
+      offers: [],
+    });
+  };
+
+  #offerChangeHandler = (evt) => {
+    if(evt.target.checked) {
+      this._setState({
+        offers: [...this._state.offers, parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)],
+      });
+    } else {
+      this._state.offers
+        .splice(this._state.offers.findIndex((offer) => offer === parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)));
+    }
+  };
+
+  #destinationChangeHandler = (evt) => {
+    const newDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
+
+    this.updateElement({
+      destination: newDestination ? newDestination.id : '',
+    });
+  };
+
+  #eventPriceChangeHandler = (evt) => {
+    this._setState({
+      basePrice: evt.target.value,
+    });
+  };
+
+  reset(event) {
+    this.updateElement(event);
+  }
+
+  _restoreHandlers() {
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
 
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#formRollupBtnClickHandler);
+
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change' , this.#eventTypeChangeHandler);
+
+    this.element.querySelector('.event__available-offers')
+      .addEventListener('change', this.#offerChangeHandler);
+
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationChangeHandler);
+
+    this.element.querySelector('.event__input--price')
+      .addEventListener('input', this.#eventPriceChangeHandler);
   }
-
-  get template() {
-    return createEventEditTemplate(this.#event, this.#offers, this.#destinations);
-  }
-
-  #formSubmitHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleFormSubmit(this.#event);
-  };
-
-  #formRollupBtnClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleFormRollupBtnClick(this.#event);
-  };
 }
