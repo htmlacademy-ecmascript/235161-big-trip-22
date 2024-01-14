@@ -74,6 +74,7 @@ export default class EventPresenter {
 
   resetView() {
     if(this.#mode !== Mode.DEFAULT) {
+      this.#eventEditComponent.reset(this.#event);
       this.#replaceFormToEvent();
     }
   }
@@ -94,6 +95,7 @@ export default class EventPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#eventEditComponent.reset(this.#event);
       this.#replaceFormToEvent();
     }
   };
@@ -112,6 +114,7 @@ export default class EventPresenter {
   };
 
   #handleFormRollupClick = () => {
+    this.#eventEditComponent.reset(this.#event);
     this.#replaceFormToEvent();
   };
 }
