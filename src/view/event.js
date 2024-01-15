@@ -1,15 +1,15 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {DATE_FORMAT, formatDate, calculateDuration} from '../utils/event-utils.js';
+import {DateFormats, formatDate, calculateDuration} from '../utils/event-utils.js';
 
 function createEventTemplate(event, allOffers, destinations) {
   const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type} = event;
 
-  const dateTime = formatDate(dateFrom, DATE_FORMAT.yearMonthDay);
-  const date = formatDate(dateFrom, DATE_FORMAT.dayMonth);
-  const fullDateStart = formatDate(dateFrom, DATE_FORMAT.fullDate);
-  const fullDateEnd = formatDate(dateTo, DATE_FORMAT.fullDate);
-  const eventStartTime = formatDate(dateFrom, DATE_FORMAT.hoursMinutes);
-  const eventEndTime = formatDate(dateTo, DATE_FORMAT.hoursMinutes);
+  const dateTime = formatDate(dateFrom, DateFormats.YEAR_MONTH_DAY);
+  const date = formatDate(dateFrom, DateFormats.DAY_MONTH);
+  const fullDateStart = formatDate(dateFrom, DateFormats.FULL_DATE);
+  const fullDateEnd = formatDate(dateTo, DateFormats.FULL_DATE);
+  const eventStartTime = formatDate(dateFrom, DateFormats.HOURS_MINUTES);
+  const eventEndTime = formatDate(dateTo, DateFormats.HOURS_MINUTES);
   const eventDestination = destinations.find((destinationElement) => destinationElement.id === destination);
   const favoriteClass = isFavorite
     ? 'event__favorite-btn--active'

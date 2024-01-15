@@ -5,12 +5,19 @@ dayjs.extend(Duration);
 
 const MILLISECONDS_AMOUNT_IN_DAY = 86400000;
 const MILLISECONDS_AMOUNT_IN_HOUR = 3600000;
-const DATE_FORMAT = {
+/*const DATE_FORMAT = {
   dayMonth: 'MMM D',
   yearMonthDay: 'YYYY-MM-D',
   fullDate: 'YYYY-MM-DTHH:mm',
   hoursMinutes: 'HH:mm',
   editFormFormat: 'MM/DD/YY HH:mm'
+};*/
+const DateFormats = {
+  DAY_MONTH: 'MMM D',
+  YEAR_MONTH_DAY: 'YYYY-MM-D',
+  FULL_DATE: 'YYYY-MM-DTHH:mm',
+  HOURS_MINUTES: 'HH:mm',
+  EDIT_FORM_FORMAT: 'd/m/y H:i',//'MM/DD/YY HH:mm'
 };
 
 function formatDate(dateFrom, format) {
@@ -75,4 +82,4 @@ function sortEventsByDuration(eventA, eventB) {
   return eventDurationB - eventDurationA;
 }
 
-export {DATE_FORMAT, formatDate, calculateDuration, isEventInThePast, isEventInThePresent, isEventInTheFuture, sortEventsByDay, sortEventsByPrice, sortEventsByDuration};
+export {DateFormats, formatDate, calculateDuration, isEventInThePast, isEventInThePresent, isEventInTheFuture, sortEventsByDay, sortEventsByPrice, sortEventsByDuration};
