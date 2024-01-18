@@ -104,13 +104,15 @@ export default class EventsPresenter {
 
       case UpdateTypes.MINOR:
         //Minor изменения у меня будут вызываться при добавлении/удалении ивентов думаю, доделаю завтра
-        this.#clearEventsList();
-        this.#renderEventsList();
+        //this.#clearEventsList();
+        //this.#renderEventsList();
+        this.#clearEventsBoard({resetSortType: false});
+        this.#renderEventsBoard();
         break;
 
       case UpdateTypes.MAJOR:
         //Major измнение у меня скорее всего будет вызываться перерисовкой при применении фильтров, перенесу все в один презентер
-        this.#clearEventsBoard();
+        this.#clearEventsBoard({resetSortType: true});
         this.#renderEventsBoard();
         break;
     }
@@ -184,11 +186,8 @@ export default class EventsPresenter {
     this.#eventPresenters.clear();
   }
 
-  //Этот метод нужен будет позднее при фильтрации, делаю заранее, если что-то забуду подробнее можно посмотреть в
-  //коммите 7.5 учебного репозитория, доделаю завтра
   #clearEventsBoard({resetSortType = false}) {
-    this.#eventPresenters.forEach((presenter) => presenter.destroy());
-    this.#eventPresenters.clear();
+    this.#clearEventsList();
 
     remove(this.#tripSortComponent);
     remove(this.#noEventsComponent);

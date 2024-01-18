@@ -48,6 +48,7 @@ export default class EventPresenter {
       offers: this.#offers,
       destinations: this.#destinations,
       onFormSubmit: this.#handleFormSubmit,
+      onDeleteBtnClick: this.#handleDeleteBtnClick,
       onFormRollupClick: this.#handleFormRollupClick,
     });
 
@@ -116,10 +117,19 @@ export default class EventPresenter {
   #handleFormSubmit = (event) => {
     this.#handleDataChange(
       UserActions.UPDATE_EVENT,
-      UpdateTypes.PATCH,
+      UpdateTypes.MINOR,
       event,
     );
     this.#replaceFormToEvent();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #handleDeleteBtnClick = (event) => {
+    this.#handleDataChange(
+      UserActions.DELETE_EVENT,
+      UpdateTypes.MINOR,
+      event,
+    );
   };
 
   #handleFormRollupClick = () => {

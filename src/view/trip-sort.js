@@ -11,7 +11,7 @@ function createTripSortItemTemplate(sortType, currentSortType) {
         name="trip-sort"
         value="sort-${sortType}"
         data-sort-type="${sortType}"
-        ${sortType === currentSortType/*SortTypes.DAY*/ ? 'checked' : ''}
+        ${sortType === currentSortType ? 'checked' : ''}
         ${sortType === SortTypes.EVENT || sortType === SortTypes.OFFERS ? 'disabled' : ''}>
       <label class="trip-sort__btn" for="sort-${sortType}" data-sort-type="${sortType}">${sortType}</label>
     </div>`

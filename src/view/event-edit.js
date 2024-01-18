@@ -113,17 +113,19 @@ export default class EventEditView extends AbstractStatefulView {
   #offers = null;
   #destinations = null;
   #handleFormSubmit = null;
+  #handleDeleteBtnClick = null;
   #handleFormRollupBtnClick = null;
 
   #datepickerDateFrom = null;
   #datepickerDateTo = null;
 
-  constructor({event, offers, destinations, onFormSubmit, onFormRollupClick}) {
+  constructor({event, offers, destinations, onFormSubmit, onFormRollupClick, onDeleteBtnClick}) {
     super();
     this._setState(event);
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleDeleteBtnClick = onDeleteBtnClick;
     this.#handleFormRollupBtnClick = onFormRollupClick;
     this._restoreHandlers();
   }
@@ -149,6 +151,11 @@ export default class EventEditView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(this._state);
+  };
+
+  #formDeleteBtnClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteBtnClick(this._state);
   };
 
   #formRollupBtnClickHandler = (evt) => {
@@ -249,6 +256,10 @@ export default class EventEditView extends AbstractStatefulView {
     this.element.querySelector('.event__input--price')
       .addEventListener('input', this.#eventPriceChangeHandler);
 
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formDeleteBtnClickHandler);
+
     this.#setDatePickers();
   }
+
 }
