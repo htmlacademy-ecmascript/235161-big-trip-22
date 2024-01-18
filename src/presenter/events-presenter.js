@@ -3,56 +3,61 @@ import EventsListView from '../view/events-list.js';
 import TripSortView from '../view/trip-sort.js';
 import EmptyView from '../view/empty-view.js';
 import EventPresenter from './event-presenter.js';
-import { SortTypes, UserActions, UpdateTypes } from '../const.js';
+import { FilterTypes, SortTypes, UserActions, UpdateTypes } from '../const.js';
 import { sortEventsByDay, sortEventsByPrice, sortEventsByDuration } from '../utils/event-utils.js';
+import {filter} from '../utils/filter-utils.js';
 //Переношу сюда импорты из хедер презентера
 import TripInfoView from '../view/trip-info.js';
-import FilterView from '../view/filter.js';
-import {generateFilter} from '../mock/filters.js';
+//import FilterView from '../view/filter.js';
+//import {generateFilter} from '../mock/filters.js';
 
 //Я остановился на коммите 7.5 учебного репозитория, завтра начну оттуда.
 export default class EventsPresenter {
   #eventsContainer = null;
   #eventsModel = null;
+  #filterModel = null;
 
   #tripInfoComponent = null;
-  #filtersComponent = null;
   #tripSortComponent = null;
   #eventListComponent = new EventsListView();
-  #noEventsComponent = new EmptyView();
+  #noEventsComponent = null;//new EmptyView();
 
   #eventPresenters = new Map();
   #currentSortType = SortTypes.DAY;
+  #filterType = FilterTypes.EVERYTHING;
 
   //Для хэдера
   #headerContainer = null;
-  #filtersContainer = null;
-  #filters = null;
   //
 
-  constructor({eventsContainer, headerContainer, filtersContainer, eventsModel}) {
+  constructor({eventsContainer, headerContainer, eventsModel, filterModel}) {
     this.#eventsContainer = eventsContainer;
     this.#headerContainer = headerContainer;
-    this.#filtersContainer = filtersContainer;
     this.#eventsModel = eventsModel;
+    this.#filterModel = filterModel;
 
     //Подписываемся на изменения модели
     this.#eventsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get events() {
+    this.#filterType = this.#filterModel.filter;
+    const events = this.#eventsModel.events;
+    const filteredEvents = filter[this.#filterType](events);
+
     switch (this.#currentSortType) {
       case SortTypes.DAY:
-        return [...this.#eventsModel.events].sort(sortEventsByDay);
+        return filteredEvents.sort(sortEventsByDay);
 
       case SortTypes.PRICE:
-        return [...this.#eventsModel.events].sort(sortEventsByPrice);
+        return filteredEvents.sort(sortEventsByPrice);
 
       case SortTypes.TIME:
-        return [...this.#eventsModel.events].sort(sortEventsByDuration);
+        return filteredEvents.sort(sortEventsByDuration);
     }
 
-    return this.#eventsModel.events;
+    return filteredEvents;
   }
 
   get offers() {
@@ -65,10 +70,7 @@ export default class EventsPresenter {
 
   init() {
     //Штуки для хедера
-    this.#filters = generateFilter(this.events);
-
     this.#renderTripInfo();
-    this.#renderFilters();
     //
     this.#renderEventsBoard();
   }
@@ -106,12 +108,14 @@ export default class EventsPresenter {
         //Minor изменения у меня будут вызываться при добавлении/удалении ивентов думаю, доделаю завтра
         //this.#clearEventsList();
         //this.#renderEventsList();
+        this.#renderTripInfo();
         this.#clearEventsBoard({resetSortType: false});
         this.#renderEventsBoard();
         break;
 
       case UpdateTypes.MAJOR:
         //Major измнение у меня скорее всего будет вызываться перерисовкой при применении фильтров, перенесу все в один презентер
+        this.#renderTripInfo();
         this.#clearEventsBoard({resetSortType: true});
         this.#renderEventsBoard();
         break;
@@ -133,6 +137,14 @@ export default class EventsPresenter {
 
   //Отрисовка Хэдера
   #renderTripInfo() {
+    if (this.#tripInfoComponent) {
+      remove(this.#tripInfoComponent);
+    }
+
+    if (this.events.length === 0) {
+      return;
+    }
+
     this.#tripInfoComponent = new TripInfoView({
       events: this.events,
       offers: this.offers,
@@ -140,12 +152,6 @@ export default class EventsPresenter {
     });
 
     render(this.#tripInfoComponent, this.#headerContainer, RenderPosition.AFTERBEGIN);
-  }
-
-  #renderFilters() {
-    this.#filtersComponent = new FilterView({filters: this.#filters});
-
-    render(this.#filtersComponent, this.#filtersContainer);
   }
   //Конец отрисовки Хэдера
 
@@ -164,6 +170,9 @@ export default class EventsPresenter {
   }
 
   #renderNoEvents() {
+    this.#noEventsComponent = new EmptyView({
+      filterType: this.#filterType,
+    });
     render(this.#noEventsComponent, this.#eventsContainer);
   }
 
@@ -190,7 +199,10 @@ export default class EventsPresenter {
     this.#clearEventsList();
 
     remove(this.#tripSortComponent);
-    remove(this.#noEventsComponent);
+
+    if (this.#noEventsComponent) {
+      remove(this.#noEventsComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortTypes.DAY;
