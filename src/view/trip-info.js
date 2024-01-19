@@ -67,10 +67,13 @@ export default class TripInfoView extends AbstractView {
 
       const neededOfferType = this.#offers.find((offer) => offer.type === this.#events[i].type);
       const filteredOffers = neededOfferType.offers.filter((offer) => this.#events[i].offers.includes(offer.id));
-      const filteredOffersPricesArray = filteredOffers.map((offer) => offer.price);
-      const sum = filteredOffersPricesArray.reduce((total, offerPrice) => total + offerPrice);
 
-      checkedOffersSum += sum;
+      if (filteredOffers.length !== 0) {
+        const filteredOffersPricesArray = filteredOffers.map((offer) => offer.price);
+        const sum = filteredOffersPricesArray.reduce((total, offerPrice) => total + offerPrice);
+
+        checkedOffersSum += sum;
+      }
     }
 
     const overallPrice = eventsBasePrice + checkedOffersSum;
