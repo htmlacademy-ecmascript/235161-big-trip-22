@@ -10,8 +10,8 @@ import {filter} from '../utils/filter-utils.js';
 import TripInfoView from '../view/trip-info.js';
 //import FilterView from '../view/filter.js';
 //import {generateFilter} from '../mock/filters.js';
+import NewEventPresenter from './new-event-presenter.js';
 
-//Я остановился на коммите 7.5 учебного репозитория, завтра начну оттуда.
 export default class EventsPresenter {
   #eventsContainer = null;
   #eventsModel = null;
@@ -23,6 +23,7 @@ export default class EventsPresenter {
   #noEventsComponent = null;//new EmptyView();
 
   #eventPresenters = new Map();
+  #newEventPresenter = null;
   #currentSortType = SortTypes.DAY;
   #filterType = FilterTypes.EVERYTHING;
 
@@ -30,11 +31,20 @@ export default class EventsPresenter {
   #headerContainer = null;
   //
 
-  constructor({eventsContainer, headerContainer, eventsModel, filterModel}) {
+  constructor({eventsContainer, headerContainer, eventsModel, filterModel, onNewEventDestroy}) {
     this.#eventsContainer = eventsContainer;
     this.#headerContainer = headerContainer;
     this.#eventsModel = eventsModel;
     this.#filterModel = filterModel;
+
+    //Новая бурда для добавления ивента
+    this.#newEventPresenter = new NewEventPresenter({
+      eventListContainer: this.#eventListComponent.element,
+      offers: this.offers,
+      destinations: this.destinations,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewEventDestroy,
+    });
 
     //Подписываемся на изменения модели
     this.#eventsModel.addObserver(this.#handleModelEvent);
@@ -72,10 +82,18 @@ export default class EventsPresenter {
     //Штуки для хедера
     this.#renderTripInfo();
     //
+
     this.#renderEventsBoard();
   }
 
+  createEvent() {
+    this.#currentSortType = SortTypes.DAY;
+    this.#filterModel.setFilter(UpdateTypes.MAJOR, FilterTypes.EVERYTHING);
+    this.#newEventPresenter.init();
+  }
+
   #handleModeChange = () => {
+    this.#newEventPresenter.destroy();
     this.#eventPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -196,6 +214,7 @@ export default class EventsPresenter {
   }
 
   #clearEventsBoard({resetSortType = false}) {
+    this.#newEventPresenter.destroy();
     this.#clearEventsList();
 
     remove(this.#tripSortComponent);
