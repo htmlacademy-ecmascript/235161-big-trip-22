@@ -40,22 +40,6 @@ export default class TripInfoView extends AbstractView {
 
   #getDestinationNames() {
     return this.#events.map((event) => this.#destinations.find((dest) => dest.id === event.destination).name);
-    /*
-    const firstDestinationName = this.#destinations.find((destination) => destination.id === this.#events[0].destination);
-
-    const secondDestinationName = this.#destinations.find((destination) => destination.id === this.#events[1]?.destination);
-
-    const lastDestinationName = this.#destinations.find((destination) => destination.id === this.#events[this.#events.length - 1].destination);
-
-    if (this.#events.length === 1) {
-      return `${firstDestinationName.name}`;
-    } else if (this.#events.length === 2) {
-      return `${firstDestinationName.name} — ${lastDestinationName.name}`;
-    } else if (this.#events.length === 3) {
-      return `${firstDestinationName.name} — ${secondDestinationName.name} — ${lastDestinationName.name}`;
-    } else {
-      return `${firstDestinationName.name} — ... — ${lastDestinationName.name}`;
-    }*/
   }
 
   #calculatePrice() {
