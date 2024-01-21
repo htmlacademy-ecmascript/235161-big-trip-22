@@ -3,6 +3,7 @@ import {EVENT_TYPES} from '../const.js';
 import {DateFormats, formatDate} from '../utils/event-utils.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import he from 'he';
 
 function createEventEditTemplate(event, availableOffers, destinations) {
   const {basePrice, dateFrom, dateTo, destination, offers, type} = event;
@@ -40,7 +41,7 @@ function createEventEditTemplate(event, availableOffers, destinations) {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" required value="${eventDestination ? eventDestination.name : ''}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" required value="${eventDestination ? he.encode(eventDestination.name) : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${destinations.map((element) => (`<option value="${element.name}"></option>`)).join('')}
           </datalist>
