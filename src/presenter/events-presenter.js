@@ -139,9 +139,12 @@ export default class EventsPresenter {
     // - Меняем активный тип сортировки
     this.#currentSortType = sortType;
     // - Очищаем список
-    this.#clearEventsList();
-    // - Рендерим список заново
-    this.#renderEventsList();
+    //this.#clearEventsList();
+    this.#clearEventsBoard({resetSortType: false});
+    // - Рендерим доску с поинтами по новой
+    //this.#renderTripSort();
+    //this.#renderEventsList();
+    this.#renderEventsBoard();
   };
 
   #renderTripInfo() {
