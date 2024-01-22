@@ -7,7 +7,7 @@ import he from 'he';
 
 const EMPTY_EVENT_TEMPLATE = {
   basePrice: 0,
-  dateFrom: '',
+  dateFrom: new Date(),
   dateTo: '',
   destination: '',
   isFavorite: false,
@@ -273,6 +273,7 @@ export default class EventAddView extends AbstractStatefulView {
         enableTime: true,
         'time_24hr': true,
         defaultDate: this._state.dateTo ? this._state.dateTo : new Date(),
+        minDate: this._state.dateFrom,
         onChange: this.#dateToChangeHandler,
       },
     );

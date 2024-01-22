@@ -223,6 +223,7 @@ export default class EventEditView extends AbstractStatefulView {
         enableTime: true,
         'time_24hr': true,
         defaultDate: this._state.dateTo ? this._state.dateTo : new Date(),
+        minDate: this._state.dateFrom,
         onChange: this.#dateToChangeHandler,
       },
     );
