@@ -1,4 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
+import {UserActions, UpdateTypes} from '../const.js';
 import EventView from '../view/event.js';
 import EventEditView from '../view/event-edit.js';
 
@@ -47,6 +48,7 @@ export default class EventPresenter {
       offers: this.#offers,
       destinations: this.#destinations,
       onFormSubmit: this.#handleFormSubmit,
+      onDeleteBtnClick: this.#handleDeleteBtnClick,
       onFormRollupClick: this.#handleFormRollupClick,
     });
 
@@ -105,12 +107,29 @@ export default class EventPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#event, isFavorite: !this.#event.isFavorite});
+    this.#handleDataChange(
+      UserActions.UPDATE_EVENT,
+      UpdateTypes.PATCH,
+      {...this.#event, isFavorite: !this.#event.isFavorite},
+    );
   };
 
   #handleFormSubmit = (event) => {
-    this.#handleDataChange(event);
+    this.#handleDataChange(
+      UserActions.UPDATE_EVENT,
+      UpdateTypes.MINOR,
+      event,
+    );
     this.#replaceFormToEvent();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #handleDeleteBtnClick = (event) => {
+    this.#handleDataChange(
+      UserActions.DELETE_EVENT,
+      UpdateTypes.MINOR,
+      event,
+    );
   };
 
   #handleFormRollupClick = () => {

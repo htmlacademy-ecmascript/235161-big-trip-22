@@ -14,8 +14,8 @@ const DateFormats = {
   EDIT_FORM_FORMAT: 'd/m/y H:i',
 };
 
-function formatDate(dateFrom, format) {
-  return dateFrom ? dayjs(dateFrom).format(format) : '';
+function formatDate(date, format) {
+  return date ? dayjs(date).format(format) : '';
 }
 
 function calculateDuration(startDate, endDate) {
