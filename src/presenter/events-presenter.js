@@ -118,14 +118,14 @@ export default class EventsPresenter {
         break;
 
       case UpdateTypes.MINOR:
-        this.#renderTripInfo();
         this.#clearEventsBoard({resetSortType: false});
+        this.#renderTripInfo();
         this.#renderEventsBoard();
         break;
 
       case UpdateTypes.MAJOR:
-        this.#renderTripInfo();
         this.#clearEventsBoard({resetSortType: true});
+        this.#renderTripInfo();
         this.#renderEventsBoard();
         break;
     }

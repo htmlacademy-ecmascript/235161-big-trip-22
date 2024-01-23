@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { DateFormats, formatDate } from '../utils/event-utils.js';
 
 function createTripInfoTemplate({destinationNames, totalPrice, events}) {
-  const destinations = [...destinationNames];
+  const destinations = [...destinationNames];//Array.from(new Set(destinationNames));
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
