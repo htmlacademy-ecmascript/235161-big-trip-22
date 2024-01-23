@@ -81,6 +81,7 @@ function createEventEditTemplate(event, availableOffers, destinations) {
           id="event-offer-${offer.title.toLowerCase().replaceAll(' ', '-')}-${offer.id}"
           type="checkbox"
           name="event-offer-${offer.title.toLowerCase().replaceAll(' ', '-')}"
+          data-id="${offer.id}"
           ${offers.includes(offer.id) ? 'checked' : ''}>
         <label class="event__offer-label" for="event-offer-${offer.title.toLowerCase().replaceAll(' ', '-')}-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
@@ -176,11 +177,14 @@ export default class EventEditView extends AbstractStatefulView {
   #offerChangeHandler = (evt) => {
     if(evt.target.checked) {
       this._setState({
-        offers: [...this._state.offers, parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)],
+        //offers: [...this._state.offers, parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)],
+        offers: [...this._state.offers, evt.target.dataset.id],
       });
     } else {
+      //this._state.offers
+      //  .splice(this._state.offers.findIndex((offer) => offer === parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)));
       this._state.offers
-        .splice(this._state.offers.findIndex((offer) => offer === parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)));
+        .splice(this._state.offers.findIndex((offer) => offer === evt.target.dataset.id));
     }
   };
 
