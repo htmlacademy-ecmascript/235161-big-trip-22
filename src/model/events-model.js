@@ -34,18 +34,24 @@ export default class EventsModel extends Observable {
     try {
       const events = await this.#eventsApiService.events;
       this.#events = events.map(this.#adaptToClient);
-      //console.log(this.#events);
+    } catch(err) {
+      //console.log('Ошибка');
+      this.#events = [];
+    }
 
+    try {
       const offers = await this.#eventsApiService.offers;
       this.#offers = offers;
-      //console.log(this.#offers);
+    } catch(err) {
+      //console.log('Ошибка офферов');
+      this.#offers = [];
+    }
 
+    try {
       const destinations = await this.#eventsApiService.destinations;
       this.#destinations = destinations;
-      //console.log(this.#destinations);
     } catch(err) {
-      this.#events = [];
-      this.#offers = [];
+      //console.log('Ошибка дестинейшенов');
       this.#destinations = [];
     }
 
@@ -74,28 +80,36 @@ export default class EventsModel extends Observable {
     }
   }
 
-  addEvent(updateType, update) {
-    this.#events = [
-      update,
-      ...this.#events,
-    ];
-
-    this._notify(updateType, update);
+  async addEvent(updateType, update) {
+    try {
+      const response = await this.#eventsApiService.addEvent(update);
+      const newEvent = this.#adaptToClient(response);
+      this.#events = [newEvent, ...this.#events];
+      this._notify(updateType, newEvent);
+    } catch(err) {
+      throw new Error('Can\'t add task');
+    }
   }
 
-  deleteEvent(updateType, update) {
+  async deleteEvent(updateType, update) {
     const index = this.#events.findIndex((event) => event.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting event');
     }
 
-    this.#events = [
-      ...this.#events.slice(0, index),
-      ...this.#events.slice(index + 1),
-    ];
+    try {
+      await this.#eventsApiService.deleteEvent(update);
 
-    this._notify(updateType);
+      this.#events = [
+        ...this.#events.slice(0, index),
+        ...this.#events.slice(index + 1),
+      ];
+
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete task');
+    }
   }
 
   #adaptToClient(event) {
@@ -111,7 +125,6 @@ export default class EventsModel extends Observable {
     delete adaptedEvent['date_to'];
     delete adaptedEvent['is_favorite'];
 
-    //console.log(adaptedEvent);
     return adaptedEvent;
   }
 }

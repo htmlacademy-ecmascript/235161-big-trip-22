@@ -6,7 +6,7 @@ import NewEventButtonView from './view/event-add-btn-view.js';
 import { render } from './framework/render.js';
 import EventsApiService from './events-api-service.js';
 
-const AUTHORIZATION = 'Basic q1i2s3t4i5s';
+const AUTHORIZATION = 'Basic q1i2s3t4i5s12345';
 const END_POINT = 'https://21.objects.pages.academy/big-trip';
 
 const siteHeader = document.querySelector('.page-header');
@@ -44,13 +44,13 @@ function handleNewEventFormClose() {
 }
 
 function handleNewEventButtonClick() {
-  eventsPresenter.createEvent();
+  eventsPresenter.createEvent(handleNewEventFormClose);
   newEventButtonComponent.element.disabled = true;
 }
 
-//render(newEventButtonComponent, tripMain);
 filterPresenter.init();
 eventsPresenter.init();
+
 eventsModel.init()
   .finally(() => {
     render(newEventButtonComponent, tripMain);

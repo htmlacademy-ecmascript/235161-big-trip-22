@@ -12,6 +12,7 @@ import NewEventPresenter from './new-event-presenter.js';
 
 export default class EventsPresenter {
   #eventsContainer = null;
+  #headerContainer = null;
   #eventsModel = null;
   #filterModel = null;
 
@@ -27,16 +28,11 @@ export default class EventsPresenter {
   #filterType = FilterTypes.EVERYTHING;
   #isLoading = true;
 
-
-  #headerContainer = null;
-
-
   constructor({eventsContainer, headerContainer, eventsModel, filterModel, onNewEventDestroy}) {
     this.#eventsContainer = eventsContainer;
     this.#headerContainer = headerContainer;
     this.#eventsModel = eventsModel;
     this.#filterModel = filterModel;
-
 
     this.#newEventPresenter = new NewEventPresenter({
       eventListContainer: this.#eventListComponent.element,
@@ -80,13 +76,26 @@ export default class EventsPresenter {
 
   init() {
     this.#renderTripInfo();
-
+    this.#renderEventsListContainer();
     this.#renderEventsBoard();
   }
 
-  createEvent() {
+  createEvent(onNewEventDestroy) {
+    this.#newEventPresenter = new NewEventPresenter({
+      eventListContainer: this.#eventListComponent.element,
+      offers: this.offers,
+      destinations: this.destinations,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewEventDestroy,
+    });
+
     this.#currentSortType = SortTypes.DAY;
     this.#filterModel.setFilter(UpdateTypes.MAJOR, FilterTypes.EVERYTHING);
+
+    if (this.#noEventsComponent) {
+      remove(this.#noEventsComponent);
+    }
+
     this.#newEventPresenter.init();
   }
 
@@ -149,13 +158,14 @@ export default class EventsPresenter {
     // - Меняем активный тип сортировки
     this.#currentSortType = sortType;
     // - Очищаем список
-    //this.#clearEventsList();
     this.#clearEventsBoard({resetSortType: false});
     // - Рендерим доску с поинтами по новой
-    //this.#renderTripSort();
-    //this.#renderEventsList();
     this.#renderEventsBoard();
   };
+
+  #renderEventsListContainer() {
+    render(this.#eventListComponent, this.#eventsContainer, RenderPosition.BEFOREEND);
+  }
 
   #renderTripInfo() {
     if (this.#tripInfoComponent) {
@@ -185,7 +195,6 @@ export default class EventsPresenter {
   }
 
   #renderEventsList() {
-    render(this.#eventListComponent, this.#eventsContainer, RenderPosition.BEFOREEND);
     this.events.forEach((event) => this.#renderEvent(event));
   }
 

@@ -1,7 +1,7 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import EventAddView from '../view/event-add.js';
 import {UserActions, UpdateTypes} from '../const.js';
-import { getRandomNumber } from '../utils.js';
+//import { getRandomNumber } from '../utils.js';
 
 export default class NewEventPresenter {
   #eventListContainer = null;
@@ -54,7 +54,7 @@ export default class NewEventPresenter {
     this.#handleDataChange(
       UserActions.ADD_EVENT,
       UpdateTypes.MAJOR,
-      {id: getRandomNumber(), ...event},
+      event,
     );
 
     this.destroy();

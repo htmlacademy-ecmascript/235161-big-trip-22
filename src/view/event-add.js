@@ -54,9 +54,19 @@ function createAvaliableOffersTemplate(eventTypeOffers, offers) {
 }
 
 function createOffersSectionTemplate(allOffers, checkedOffers, type) {
+  //console.log(allOffers);
+  if (allOffers.length === 0) {
+    return (
+      `<section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        <div class="event__available-offers">
+        </div>
+      </section>`
+    );
+  }
 
   const eventTypeOffers = allOffers.find((offer) => offer.type === type);
-
+  //console.log(eventTypeOffers);
   if (eventTypeOffers.length === 0) {
     return '';
   }
@@ -74,6 +84,17 @@ function createOffersSectionTemplate(allOffers, checkedOffers, type) {
 function createDestinationSectionTemplate(destinationInfo) {
   if (!destinationInfo) {
     return '';
+    /*return (
+      `<section class="event__section  event__section--destination">
+
+        <p class="event__destination-description"></p>
+        <div class="event__photos-container">
+          <div class="event__photos-tape">
+
+          </div>
+        </div>
+      </section>`
+    );*/
   }
   return (
     `<section class="event__section  event__section--destination">
@@ -92,8 +113,6 @@ function createEventAddTemplate(event, allOffers, destinations) {
 
   const {basePrice, dateFrom, dateTo, destination, offers, type} = event;
   const destinationInfo = destinations.find((item) => item.id === destination);
-  //const eventStartTime = formatDate(dateFrom, DateFormats.EDIT_FORM_FORMAT);
-  //const eventEndTime = formatDate(dateTo, DateFormats.EDIT_FORM_FORMAT);
   const renderDestinationsList = destinations.map((dest) => `<option value="${dest.name}"></option>`).join('');
 
   return (
@@ -220,11 +239,11 @@ export default class EventAddView extends AbstractStatefulView {
   #offerChangeHandler = (evt) => {
     if(evt.target.checked) {
       this._setState({
-        offers: [...this._state.offers, parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)],
+        offers: [...this._state.offers, evt.target.dataset.id],
       });
     } else {
       this._state.offers
-        .splice(this._state.offers.findIndex((offer) => offer === parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)));
+        .splice(this._state.offers.findIndex((offer) => offer === evt.target.dataset.id));
     }
   };
 
@@ -272,7 +291,7 @@ export default class EventAddView extends AbstractStatefulView {
         dateFormat: DateFormats.EDIT_FORM_FORMAT,
         enableTime: true,
         'time_24hr': true,
-        defaultDate: this._state.dateTo ? this._state.dateTo : new Date(),
+        defaultDate: this._state.dateTo ? this._state.dateTo : new Date().fp_incr(1),
         minDate: this._state.dateFrom,
         onChange: this.#dateToChangeHandler,
       },
