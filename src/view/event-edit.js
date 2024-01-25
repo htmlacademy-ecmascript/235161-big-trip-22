@@ -6,7 +6,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import he from 'he';
 
 function createEventEditTemplate(event, availableOffers, destinations) {
-  const {basePrice, dateFrom, dateTo, destination, offers, type} = event;
+  const {basePrice, dateFrom, dateTo, destination, offers, type, isSaving, isDeleting} = event;
   const eventDestination = destinations.find((destinationElement) => destinationElement.id === destination);
   const eventChosenTypeOffers = availableOffers.find((offer) => offer.type === type);
   const eventStartTime = formatDate(dateFrom, DateFormats.EDIT_FORM_FORMAT);
@@ -63,8 +63,8 @@ function createEventEditTemplate(event, availableOffers, destinations) {
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset">${isDeleting ? 'Deleting...' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
@@ -123,7 +123,11 @@ export default class EventEditView extends AbstractStatefulView {
 
   constructor({event, offers, destinations, onFormSubmit, onFormRollupClick, onDeleteBtnClick}) {
     super();
-    this._setState(event);
+    this._setState({
+      ...event,
+      isSaving: false,
+      isDeleting: false
+    });
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
@@ -152,6 +156,10 @@ export default class EventEditView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+    //Новые штутки тут,для преключения состояния кнопок сохранить/удалить
+    delete this._state.isSaving;
+    delete this._state.isDeleting;
+    //
     this.#handleFormSubmit(this._state);
   };
 
@@ -177,12 +185,9 @@ export default class EventEditView extends AbstractStatefulView {
   #offerChangeHandler = (evt) => {
     if(evt.target.checked) {
       this._setState({
-        //offers: [...this._state.offers, parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)],
         offers: [...this._state.offers, evt.target.dataset.id],
       });
     } else {
-      //this._state.offers
-      //  .splice(this._state.offers.findIndex((offer) => offer === parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)));
       this._state.offers
         .splice(this._state.offers.findIndex((offer) => offer === evt.target.dataset.id));
     }
@@ -216,6 +221,7 @@ export default class EventEditView extends AbstractStatefulView {
         enableTime: true,
         'time_24hr': true,
         defaultDate: this._state.dateFrom ? this._state.dateFrom : new Date(),
+        maxDate: this._state.dateTo,
         onChange: this.#dateFromChangeHandler,
       },
     );

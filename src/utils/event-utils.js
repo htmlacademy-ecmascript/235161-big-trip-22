@@ -30,7 +30,9 @@ function calculateDuration(startDate, endDate) {
     durationFormat = 'mm[M]';
   }
 
-  return dayjs.duration(eventDuration).format(durationFormat);
+  return Math.floor(dayjs.duration(eventDuration).asDays()) > 29 ?
+    `${Math.floor(dayjs.duration(eventDuration).asDays())}D ${dayjs.duration(eventDuration).format('HH[H] mm[M]')}`
+    : dayjs.duration(eventDuration).format(durationFormat);
 }
 
 function isEventInThePast(date) {

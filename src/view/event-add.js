@@ -6,8 +6,8 @@ import 'flatpickr/dist/flatpickr.min.css';
 import he from 'he';
 
 const EMPTY_EVENT_TEMPLATE = {
-  basePrice: 0,
-  dateFrom: new Date(),
+  basePrice: '',
+  dateFrom: '',
   dateTo: '',
   destination: '',
   isFavorite: false,
@@ -54,7 +54,6 @@ function createAvaliableOffersTemplate(eventTypeOffers, offers) {
 }
 
 function createOffersSectionTemplate(allOffers, checkedOffers, type) {
-  //console.log(allOffers);
   if (allOffers.length === 0) {
     return (
       `<section class="event__section  event__section--offers">
@@ -66,7 +65,7 @@ function createOffersSectionTemplate(allOffers, checkedOffers, type) {
   }
 
   const eventTypeOffers = allOffers.find((offer) => offer.type === type);
-  //console.log(eventTypeOffers);
+
   if (eventTypeOffers.length === 0) {
     return '';
   }
@@ -111,7 +110,7 @@ function createDestinationSectionTemplate(destinationInfo) {
 
 function createEventAddTemplate(event, allOffers, destinations) {
 
-  const {basePrice, dateFrom, dateTo, destination, offers, type} = event;
+  const {basePrice, dateFrom, dateTo, destination, offers, type, isSaving} = event;
   const destinationInfo = destinations.find((item) => item.id === destination);
   const renderDestinationsList = destinations.map((dest) => `<option value="${dest.name}"></option>`).join('');
 
@@ -138,7 +137,7 @@ function createEventAddTemplate(event, allOffers, destinations) {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo ? he.encode(destinationInfo.name) : ''}" list="destination-list-1" required>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo ? he.encode(destinationInfo.name) : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${renderDestinationsList}
           </datalist>
@@ -160,7 +159,7 @@ function createEventAddTemplate(event, allOffers, destinations) {
           <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
       </header>
       <section class="event__details">
@@ -177,19 +176,17 @@ export default class EventAddView extends AbstractStatefulView {
   #destinations = null;
   #handleFormSubmit = null;
   #handleDeleteBtnClick = null;
-  //#handleFormRollupBtnClick = null;
 
   #datepickerDateFrom = null;
   #datepickerDateTo = null;
 
   constructor({offers, destinations, onFormSubmit, onDeleteBtnClick}) {
     super();
-    this._setState(EMPTY_EVENT_TEMPLATE);
+    this._setState({...EMPTY_EVENT_TEMPLATE, isSaving: false});
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteBtnClick = onDeleteBtnClick;
-    //this.#handleFormRollupBtnClick = onFormRollupClick;
     this._restoreHandlers();
   }
 
@@ -213,6 +210,9 @@ export default class EventAddView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+    //Новые штуки для состояния кнопок отправки/удаления
+    delete this._state.isSaving;
+    //
     this.#handleFormSubmit(this._state);
   };
 
@@ -220,12 +220,6 @@ export default class EventAddView extends AbstractStatefulView {
     evt.preventDefault();
     this.#handleDeleteBtnClick(this._state);
   };
-  /*
-  #formRollupBtnClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleFormRollupBtnClick(this._state);
-  };
-  */
 
   #eventTypeChangeHandler = (evt) => {
     evt.preventDefault();
@@ -280,7 +274,8 @@ export default class EventAddView extends AbstractStatefulView {
         dateFormat: DateFormats.EDIT_FORM_FORMAT,
         enableTime: true,
         'time_24hr': true,
-        defaultDate: this._state.dateFrom ? this._state.dateFrom : new Date(),
+        defaultDate: this._state.dateFrom || '',
+        maxDate: this._state.dateTo,
         onChange: this.#dateFromChangeHandler,
       },
     );
@@ -291,7 +286,7 @@ export default class EventAddView extends AbstractStatefulView {
         dateFormat: DateFormats.EDIT_FORM_FORMAT,
         enableTime: true,
         'time_24hr': true,
-        defaultDate: this._state.dateTo ? this._state.dateTo : new Date().fp_incr(1),
+        defaultDate: this._state.dateTo || '',
         minDate: this._state.dateFrom,
         onChange: this.#dateToChangeHandler,
       },
@@ -305,10 +300,7 @@ export default class EventAddView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
-    /*
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#formRollupBtnClickHandler);
-    */
+
     this.element.querySelector('.event__type-group')
       .addEventListener('change' , this.#eventTypeChangeHandler);
 

@@ -62,7 +62,9 @@ export default class EventPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#eventEditComponent, previousEventEditComponent);
+      //replace(this.#eventEditComponent, previousEventEditComponent);
+      replace(this.#eventComponent, previousEventEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(previousEventComponent);
@@ -79,6 +81,37 @@ export default class EventPresenter {
       this.#eventEditComponent.reset(this.#event);
       this.#replaceFormToEvent();
     }
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#eventEditComponent.updateElement({
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#eventEditComponent.updateElement({
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#eventComponent.shake();
+    }
+
+    const resetFormState = () => {
+      this.#eventEditComponent.updateElement({
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#eventEditComponent.shake(resetFormState);
   }
 
   #replaceEventToForm() {
@@ -120,7 +153,7 @@ export default class EventPresenter {
       UpdateTypes.MINOR,
       event,
     );
-    this.#replaceFormToEvent();
+    //this.#replaceFormToEvent();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
