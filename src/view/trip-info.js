@@ -1,14 +1,16 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { DateFormats, formatDate } from '../utils/event-utils.js';
 
-function createTripInfoTemplate({destinationNames, totalPrice, events}) {
-  const destinations = [...destinationNames];//Array.from(new Set(destinationNames));
+const MAX_VISIBLE_DESTINATIONS = 3;
+
+function createTripInfoTemplate({destinationNames, totalPrice, eventDates}) {
+  const destinations = [...destinationNames];
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
-        <h1 class="trip-info__title">${destinations.length > 3 ? `${destinations[0]} &mdash;...&mdash; ${destinations[destinations.length - 1]}` : destinations.join(' &mdash; ')}</h1>
+        <h1 class="trip-info__title">${destinations.length > MAX_VISIBLE_DESTINATIONS ? `${destinations[0]} &mdash;...&mdash; ${destinations[destinations.length - 1]}` : destinations.join(' &mdash; ')}</h1>
 
-        <p class="trip-info__dates">${formatDate(events[0].dateFrom, DateFormats.DAY_MONTH)}&nbsp;&mdash;&nbsp;${formatDate(events[events.length - 1].dateTo, DateFormats.DAY_MONTH)}</p>
+        <p class="trip-info__dates">${eventDates}</p>
       </div>
 
       <p class="trip-info__cost">
@@ -34,12 +36,20 @@ export default class TripInfoView extends AbstractView {
     return createTripInfoTemplate({
       destinationNames: this.#getDestinationNames(),
       totalPrice: this.#calculatePrice(),
+      eventDates: this.#getDates(),
       events: this.#events,
     });
   }
 
   #getDestinationNames() {
     return this.#events.map((event) => this.#destinations.find((dest) => dest.id === event.destination).name);
+  }
+
+  #getDates() {
+    return this.#events.length > 1 ?
+      `${formatDate(this.#events[0].dateFrom, DateFormats.MONTH_DAY)}&nbsp;&mdash;&nbsp;${formatDate(this.#events[this.#events.length - 1].dateTo, DateFormats.MONTH_DAY)}`
+      :
+      `${formatDate(this.#events[0].dateFrom, DateFormats.MONTH_DAY)}`;
   }
 
   #calculatePrice() {

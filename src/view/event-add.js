@@ -6,7 +6,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import he from 'he';
 
 const EMPTY_EVENT_TEMPLATE = {
-  basePrice: '',
+  basePrice: 0,
   dateFrom: '',
   dateTo: '',
   destination: '',
@@ -33,6 +33,7 @@ function createEventTypesTemplate(type) {
 }
 
 function createAvaliableOffersTemplate(eventTypeOffers, offers) {
+
   return (
     eventTypeOffers.offers.map((offer) => (
       `<div class="event__offer-selector">
@@ -54,19 +55,20 @@ function createAvaliableOffersTemplate(eventTypeOffers, offers) {
 }
 
 function createOffersSectionTemplate(allOffers, checkedOffers, type) {
-  if (allOffers.length === 0) {
-    return (
+  //if (allOffers.length === 0) {
+  /*return (
       `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
         </div>
       </section>`
-    );
-  }
+    );*/
+  //return '';
+  //}
 
   const eventTypeOffers = allOffers.find((offer) => offer.type === type);
 
-  if (eventTypeOffers.length === 0) {
+  if (eventTypeOffers.offers.length === 0) {
     return '';
   }
 
@@ -80,30 +82,22 @@ function createOffersSectionTemplate(allOffers, checkedOffers, type) {
   );
 }
 
-function createDestinationSectionTemplate(destinationInfo) {
-  if (!destinationInfo) {
+function createDestinationSectionTemplate(eventDestination) {
+  if (!eventDestination || eventDestination.description === '' && eventDestination.pictures.length === 0) {
     return '';
-    /*return (
-      `<section class="event__section  event__section--destination">
-
-        <p class="event__destination-description"></p>
-        <div class="event__photos-container">
-          <div class="event__photos-tape">
-
-          </div>
-        </div>
-      </section>`
-    );*/
   }
+
   return (
     `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destinationInfo.description}</p>
-      <div class="event__photos-container">
+      <p class="event__destination-description">${eventDestination.description}</p>
+      ${eventDestination?.pictures.length !== 0 ?
+      `<div class="event__photos-container">
         <div class="event__photos-tape">
-          ${destinationInfo.pictures.map((image) => `<img class="event__photo" src="${image.src}" alt="${image.description}">`).join('')}
+        ${eventDestination.pictures.map((image) => `<img class="event__photo" src="${image.src}" alt="${image.description}">`).join('')}
         </div>
-      </div>
+      </div>` : ''}
+
     </section>`
   );
 }
@@ -111,7 +105,7 @@ function createDestinationSectionTemplate(destinationInfo) {
 function createEventAddTemplate(event, allOffers, destinations) {
 
   const {basePrice, dateFrom, dateTo, destination, offers, type, isSaving} = event;
-  const destinationInfo = destinations.find((item) => item.id === destination);
+  const eventDestination = destinations.find((item) => item.id === destination);
   const renderDestinationsList = destinations.map((dest) => `<option value="${dest.name}"></option>`).join('');
 
   return (
@@ -137,7 +131,7 @@ function createEventAddTemplate(event, allOffers, destinations) {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo ? he.encode(destinationInfo.name) : ''}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${eventDestination ? he.encode(eventDestination.name) : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${renderDestinationsList}
           </datalist>
@@ -164,7 +158,7 @@ function createEventAddTemplate(event, allOffers, destinations) {
       </header>
       <section class="event__details">
         ${createOffersSectionTemplate(allOffers, offers, type)}
-        ${createDestinationSectionTemplate(destinationInfo)}
+        ${createDestinationSectionTemplate(eventDestination)}
       </section>
     </form>
   </li>`
@@ -256,13 +250,13 @@ export default class EventAddView extends AbstractStatefulView {
   };
 
   #dateFromChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateFrom: userDate,
     });
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate,
     });
   };
@@ -274,7 +268,7 @@ export default class EventAddView extends AbstractStatefulView {
         dateFormat: DateFormats.EDIT_FORM_FORMAT,
         enableTime: true,
         'time_24hr': true,
-        defaultDate: this._state.dateFrom || '',
+        defaultDate: this._state.dateFrom ? this._state.dateFrom : '',
         maxDate: this._state.dateTo,
         onChange: this.#dateFromChangeHandler,
       },
@@ -286,7 +280,7 @@ export default class EventAddView extends AbstractStatefulView {
         dateFormat: DateFormats.EDIT_FORM_FORMAT,
         enableTime: true,
         'time_24hr': true,
-        defaultDate: this._state.dateTo || '',
+        defaultDate: this._state.dateTo ? this._state.dateTo : '',
         minDate: this._state.dateFrom,
         onChange: this.#dateToChangeHandler,
       },
@@ -304,8 +298,13 @@ export default class EventAddView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group')
       .addEventListener('change' , this.#eventTypeChangeHandler);
 
+    if (this.element.querySelector('.event__available-offers')) {
+      this.element.querySelector('.event__available-offers')
+        .addEventListener('change', this.#offerChangeHandler);
+    }
+    /*
     this.element.querySelector('.event__available-offers')
-      .addEventListener('change', this.#offerChangeHandler);
+      .addEventListener('change', this.#offerChangeHandler);*/
 
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);

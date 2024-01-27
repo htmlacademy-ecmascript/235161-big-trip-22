@@ -10,11 +10,13 @@ import { sortEventsByDay, sortEventsByPrice, sortEventsByDuration } from '../uti
 import {filter} from '../utils/filter-utils.js';
 import TripInfoView from '../view/trip-info.js';
 import NewEventPresenter from './new-event-presenter.js';
+import PointsLoadErrorView from '../view/points-load-error-view.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
   UPPER_LIMIT: 1000,
 };
+
 export default class EventsPresenter {
   #eventsContainer = null;
   #headerContainer = null;
@@ -26,6 +28,7 @@ export default class EventsPresenter {
   #eventListComponent = new EventsListView();
   #noEventsComponent = null;
   #loadingComponent = new LoadingView();
+  #pointsLoadErrorComponent = new PointsLoadErrorView();
 
   #eventPresenters = new Map();
   #newEventPresenter = null;
@@ -108,6 +111,13 @@ export default class EventsPresenter {
     this.#newEventPresenter.init();
   }
 
+  //Метод чтобы передать его в main и обработать отмену создания нового поинта при пустом массиве поинтов
+  rerenderNoEventsComponent() {
+    if (this.events.length === 0) {
+      this.#renderNoEvents();
+    }
+  }
+
   #handleModeChange = () => {
     this.#newEventPresenter.destroy();
     this.#eventPresenters.forEach((presenter) => presenter.resetView());
@@ -120,30 +130,35 @@ export default class EventsPresenter {
     switch (actionType) {
       case UserActions.UPDATE_EVENT:
         this.#eventPresenters.get(update.id).setSaving();
-        //this.#eventsModel.updateEvent(updateType, update);
         try {
           await this.#eventsModel.updateEvent(updateType, update);
         } catch(err) {
           this.#eventPresenters.get(update.id).setAborting();
         }
+
+        this.#renderTripInfo();
         break;
       case UserActions.ADD_EVENT:
         this.#newEventPresenter.setSaving();
-        //this.#eventsModel.addEvent(updateType, update);
+
         try {
           await this.#eventsModel.addEvent(updateType, update);
         } catch(err) {
           this.#newEventPresenter.setAborting();
         }
+
+        this.#renderTripInfo();
         break;
       case UserActions.DELETE_EVENT:
         this.#eventPresenters.get(update.id).setDeleting();
-        //this.#eventsModel.deleteEvent(updateType, update);
         try {
           await this.#eventsModel.deleteEvent(updateType, update);
         } catch(err) {
           this.#eventPresenters.get(update.id).setAborting();
         }
+
+        this.#renderTripInfo();
+
         break;
     }
 
@@ -152,10 +167,8 @@ export default class EventsPresenter {
 
   #handleModelEvent = (updateType, data) => {
 
-    // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateTypes.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this.#eventPresenters.get(data.id).init(data);
         break;
 
@@ -167,7 +180,6 @@ export default class EventsPresenter {
 
       case UpdateTypes.MAJOR:
         this.#clearEventsBoard({resetSortType: true});
-        this.#renderTripInfo();
         this.#renderEventsBoard();
         break;
 
@@ -176,6 +188,13 @@ export default class EventsPresenter {
         remove(this.#loadingComponent);
         this.#renderTripInfo();
         this.#renderEventsBoard();
+        break;
+
+      case UpdateTypes.POINTS_LOAD_ERROR:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        remove(this.#noEventsComponent);
+        this.#renderPointsLoadError();
         break;
     }
   };
@@ -230,6 +249,10 @@ export default class EventsPresenter {
 
   #renderLoading() {
     render(this.#loadingComponent, this.#eventsContainer, RenderPosition.BEFOREEND);
+  }
+
+  #renderPointsLoadError() {
+    render(this.#pointsLoadErrorComponent, this.#eventsContainer, RenderPosition.BEFOREEND);
   }
 
   #renderNoEvents() {

@@ -154,7 +154,8 @@ export default class EventPresenter {
       event,
     );
     //this.#replaceFormToEvent();
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    //После тестов решил убрать удаления обработчика, так как при ошибке отправки,форму трясет и она не закрывается
+    //document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleDeleteBtnClick = (event) => {

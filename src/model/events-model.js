@@ -1,17 +1,12 @@
 import Observable from '../framework/observable.js';
 import { UpdateTypes } from '../const.js';
-//import {getRandomEvent} from '../mock/event.js';
-//import {mockOffers} from '../mock/offer.js';
-//import {mockDestinations} from '../mock/destination.js';
-
-//const EVENTS_COUNT = 3;
 
 export default class EventsModel extends Observable {
   #eventsApiService = null;
 
-  #events = [];//Array.from({length: EVENTS_COUNT}, getRandomEvent);
-  #offers = [];//mockOffers;
-  #destinations = [];//mockDestinations;
+  #events = [];
+  #offers = [];
+  #destinations = [];
 
   constructor({eventsApiService}) {
     super();
@@ -32,30 +27,22 @@ export default class EventsModel extends Observable {
 
   async init() {
     try {
-      const events = await this.#eventsApiService.events;
-      this.#events = events.map(this.#adaptToClient);
-    } catch(err) {
-      //console.log('Ошибка');
-      this.#events = [];
-    }
-
-    try {
       const offers = await this.#eventsApiService.offers;
       this.#offers = offers;
-    } catch(err) {
-      //console.log('Ошибка офферов');
-      this.#offers = [];
-    }
 
-    try {
       const destinations = await this.#eventsApiService.destinations;
       this.#destinations = destinations;
-    } catch(err) {
-      //console.log('Ошибка дестинейшенов');
-      this.#destinations = [];
-    }
 
-    this._notify(UpdateTypes.INIT);
+      const events = await this.#eventsApiService.events;
+      this.#events = events.map(this.#adaptToClient);
+
+      this._notify(UpdateTypes.INIT);
+    } catch(err) {
+      //this.#offers = [];
+      //this.#destinations = [];
+      //this.#events = [];
+      this._notify(UpdateTypes.POINTS_LOAD_ERROR);
+    }
   }
 
   async updateEvent(updateType, update) {
