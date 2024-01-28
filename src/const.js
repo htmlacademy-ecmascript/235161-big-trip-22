@@ -25,6 +25,8 @@ const UpdateTypes = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
+  POINTS_LOAD_ERROR: 'POINTS_LOAD_ERROR',
 };
 
 export {EVENT_TYPES, FilterTypes, SortTypes, UserActions, UpdateTypes};

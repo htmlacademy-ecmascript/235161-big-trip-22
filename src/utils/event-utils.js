@@ -5,9 +5,11 @@ dayjs.extend(Duration);
 
 const MILLISECONDS_AMOUNT_IN_DAY = 86400000;
 const MILLISECONDS_AMOUNT_IN_HOUR = 3600000;
+const MAX_DAYS_BEFORE_CONVERTING_INTO_MONTH = 29;
 
 const DateFormats = {
   DAY_MONTH: 'MMM D',
+  MONTH_DAY: 'D MMM',
   YEAR_MONTH_DAY: 'YYYY-MM-D',
   FULL_DATE: 'YYYY-MM-DTHH:mm',
   HOURS_MINUTES: 'HH:mm',
@@ -30,9 +32,11 @@ function calculateDuration(startDate, endDate) {
     durationFormat = 'mm[M]';
   }
 
-  return dayjs.duration(eventDuration).format(durationFormat);
+  return Math.floor(dayjs.duration(eventDuration).asDays()) > MAX_DAYS_BEFORE_CONVERTING_INTO_MONTH ?
+    `${Math.floor(dayjs.duration(eventDuration).asDays())}D ${dayjs.duration(eventDuration).format('HH[H] mm[M]')}`
+    : dayjs.duration(eventDuration).format(durationFormat);
 }
-
+/*
 function isEventInThePast(date) {
   return date && dayjs(date).isBefore(dayjs(), 'D');
 }
@@ -44,7 +48,7 @@ function isEventInThePresent(date) {
 function isEventInTheFuture(date) {
   return date && dayjs(date).isAfter(dayjs(), 'D');
 }
-
+*/
 function getWeightForNullDate(dateA, dateB) {
   if (dateA === null && dateB === null) {
     return 0;
@@ -76,4 +80,4 @@ function sortEventsByDuration(eventA, eventB) {
   return eventDurationB - eventDurationA;
 }
 
-export {DateFormats, formatDate, calculateDuration, isEventInThePast, isEventInThePresent, isEventInTheFuture, sortEventsByDay, sortEventsByPrice, sortEventsByDuration};
+export {DateFormats, formatDate, calculateDuration, /*isEventInThePast, isEventInThePresent, isEventInTheFuture,*/ sortEventsByDay, sortEventsByPrice, sortEventsByDuration};

@@ -7,7 +7,7 @@ import he from 'he';
 
 const EMPTY_EVENT_TEMPLATE = {
   basePrice: 0,
-  dateFrom: new Date(),
+  dateFrom: '',
   dateTo: '',
   destination: '',
   isFavorite: false,
@@ -33,6 +33,7 @@ function createEventTypesTemplate(type) {
 }
 
 function createAvaliableOffersTemplate(eventTypeOffers, offers) {
+
   return (
     eventTypeOffers.offers.map((offer) => (
       `<div class="event__offer-selector">
@@ -54,10 +55,20 @@ function createAvaliableOffersTemplate(eventTypeOffers, offers) {
 }
 
 function createOffersSectionTemplate(allOffers, checkedOffers, type) {
+  //if (allOffers.length === 0) {
+  /*return (
+      `<section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        <div class="event__available-offers">
+        </div>
+      </section>`
+    );*/
+  //return '';
+  //}
 
   const eventTypeOffers = allOffers.find((offer) => offer.type === type);
 
-  if (eventTypeOffers.length === 0) {
+  if (eventTypeOffers.offers.length === 0) {
     return '';
   }
 
@@ -71,29 +82,30 @@ function createOffersSectionTemplate(allOffers, checkedOffers, type) {
   );
 }
 
-function createDestinationSectionTemplate(destinationInfo) {
-  if (!destinationInfo) {
+function createDestinationSectionTemplate(eventDestination) {
+  if (!eventDestination || eventDestination.description === '' && eventDestination.pictures.length === 0) {
     return '';
   }
+
   return (
     `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destinationInfo.description}</p>
-      <div class="event__photos-container">
+      <p class="event__destination-description">${eventDestination.description}</p>
+      ${eventDestination?.pictures.length !== 0 ?
+      `<div class="event__photos-container">
         <div class="event__photos-tape">
-          ${destinationInfo.pictures.map((image) => `<img class="event__photo" src="${image.src}" alt="${image.description}">`).join('')}
+        ${eventDestination.pictures.map((image) => `<img class="event__photo" src="${image.src}" alt="${image.description}">`).join('')}
         </div>
-      </div>
+      </div>` : ''}
+
     </section>`
   );
 }
 
 function createEventAddTemplate(event, allOffers, destinations) {
 
-  const {basePrice, dateFrom, dateTo, destination, offers, type} = event;
-  const destinationInfo = destinations.find((item) => item.id === destination);
-  //const eventStartTime = formatDate(dateFrom, DateFormats.EDIT_FORM_FORMAT);
-  //const eventEndTime = formatDate(dateTo, DateFormats.EDIT_FORM_FORMAT);
+  const {basePrice, dateFrom, dateTo, destination, offers, type, isSaving} = event;
+  const eventDestination = destinations.find((item) => item.id === destination);
   const renderDestinationsList = destinations.map((dest) => `<option value="${dest.name}"></option>`).join('');
 
   return (
@@ -119,7 +131,7 @@ function createEventAddTemplate(event, allOffers, destinations) {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo ? he.encode(destinationInfo.name) : ''}" list="destination-list-1" required>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${eventDestination ? he.encode(eventDestination.name) : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${renderDestinationsList}
           </datalist>
@@ -141,12 +153,12 @@ function createEventAddTemplate(event, allOffers, destinations) {
           <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
       </header>
       <section class="event__details">
         ${createOffersSectionTemplate(allOffers, offers, type)}
-        ${createDestinationSectionTemplate(destinationInfo)}
+        ${createDestinationSectionTemplate(eventDestination)}
       </section>
     </form>
   </li>`
@@ -158,19 +170,17 @@ export default class EventAddView extends AbstractStatefulView {
   #destinations = null;
   #handleFormSubmit = null;
   #handleDeleteBtnClick = null;
-  //#handleFormRollupBtnClick = null;
 
   #datepickerDateFrom = null;
   #datepickerDateTo = null;
 
   constructor({offers, destinations, onFormSubmit, onDeleteBtnClick}) {
     super();
-    this._setState(EMPTY_EVENT_TEMPLATE);
+    this._setState({...EMPTY_EVENT_TEMPLATE, isSaving: false});
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteBtnClick = onDeleteBtnClick;
-    //this.#handleFormRollupBtnClick = onFormRollupClick;
     this._restoreHandlers();
   }
 
@@ -194,6 +204,9 @@ export default class EventAddView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+    //Новые штуки для состояния кнопок отправки/удаления
+    delete this._state.isSaving;
+    //
     this.#handleFormSubmit(this._state);
   };
 
@@ -201,12 +214,6 @@ export default class EventAddView extends AbstractStatefulView {
     evt.preventDefault();
     this.#handleDeleteBtnClick(this._state);
   };
-  /*
-  #formRollupBtnClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleFormRollupBtnClick(this._state);
-  };
-  */
 
   #eventTypeChangeHandler = (evt) => {
     evt.preventDefault();
@@ -220,11 +227,11 @@ export default class EventAddView extends AbstractStatefulView {
   #offerChangeHandler = (evt) => {
     if(evt.target.checked) {
       this._setState({
-        offers: [...this._state.offers, parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)],
+        offers: [...this._state.offers, evt.target.dataset.id],
       });
     } else {
       this._state.offers
-        .splice(this._state.offers.findIndex((offer) => offer === parseInt(evt.target.id.replace(/[^0-9]/g, ''), 10)));
+        .splice(this._state.offers.findIndex((offer) => offer === evt.target.dataset.id));
     }
   };
 
@@ -243,13 +250,13 @@ export default class EventAddView extends AbstractStatefulView {
   };
 
   #dateFromChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateFrom: userDate,
     });
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate,
     });
   };
@@ -261,7 +268,8 @@ export default class EventAddView extends AbstractStatefulView {
         dateFormat: DateFormats.EDIT_FORM_FORMAT,
         enableTime: true,
         'time_24hr': true,
-        defaultDate: this._state.dateFrom ? this._state.dateFrom : new Date(),
+        defaultDate: this._state.dateFrom ? this._state.dateFrom : '',
+        maxDate: this._state.dateTo,
         onChange: this.#dateFromChangeHandler,
       },
     );
@@ -272,7 +280,7 @@ export default class EventAddView extends AbstractStatefulView {
         dateFormat: DateFormats.EDIT_FORM_FORMAT,
         enableTime: true,
         'time_24hr': true,
-        defaultDate: this._state.dateTo ? this._state.dateTo : new Date(),
+        defaultDate: this._state.dateTo ? this._state.dateTo : '',
         minDate: this._state.dateFrom,
         onChange: this.#dateToChangeHandler,
       },
@@ -286,15 +294,17 @@ export default class EventAddView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
-    /*
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#formRollupBtnClickHandler);
-    */
+
     this.element.querySelector('.event__type-group')
       .addEventListener('change' , this.#eventTypeChangeHandler);
 
+    if (this.element.querySelector('.event__available-offers')) {
+      this.element.querySelector('.event__available-offers')
+        .addEventListener('change', this.#offerChangeHandler);
+    }
+    /*
     this.element.querySelector('.event__available-offers')
-      .addEventListener('change', this.#offerChangeHandler);
+      .addEventListener('change', this.#offerChangeHandler);*/
 
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);

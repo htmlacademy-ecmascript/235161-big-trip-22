@@ -1,7 +1,7 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import EventAddView from '../view/event-add.js';
 import {UserActions, UpdateTypes} from '../const.js';
-import { getRandomNumber } from '../utils.js';
+//import { getRandomNumber } from '../utils.js';
 
 export default class NewEventPresenter {
   #eventListContainer = null;
@@ -50,14 +50,29 @@ export default class NewEventPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving() {
+    this.#eventAddComponent.updateElement({
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#eventAddComponent.updateElement({
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#eventAddComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (event) => {
     this.#handleDataChange(
       UserActions.ADD_EVENT,
       UpdateTypes.MAJOR,
-      {id: getRandomNumber(), ...event},
+      event,
     );
-
-    this.destroy();
   };
 
   #handleDeleteClick = () => {
