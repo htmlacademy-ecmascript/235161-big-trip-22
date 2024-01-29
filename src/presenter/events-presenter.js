@@ -47,10 +47,6 @@ export default class EventsPresenter {
     this.#filterModel = filterModel;
 
     this.#newEventPresenter = new NewEventPresenter({
-      //eventListContainer: this.#eventListComponent.element,
-      //offers: [...this.#eventsModel.offers],
-      //destinations: [...this.#eventsModel.destinations],
-      //onDataChange: this.#handleViewAction,
       onDestroy: onNewEventDestroy,
     });
 
