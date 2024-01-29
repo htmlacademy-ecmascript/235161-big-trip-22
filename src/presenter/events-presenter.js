@@ -178,6 +178,11 @@ export default class EventsPresenter {
       case UpdateTypes.MAJOR:
         this.#clearEventsBoard({resetSortType: true});
         this.#renderEventsBoard();
+
+        if (!this.#headerContainer.querySelector('.trip-info')) {
+          this.#renderTripInfo();
+        }
+
         break;
 
       case UpdateTypes.INIT:
