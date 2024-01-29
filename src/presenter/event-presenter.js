@@ -1,5 +1,6 @@
 import { render, replace, remove } from '../framework/render.js';
 import {UserActions, UpdateTypes} from '../const.js';
+import { isEscapeKey } from '../utils.js';
 import EventView from '../view/event.js';
 import EventEditView from '../view/event-edit.js';
 
@@ -62,7 +63,6 @@ export default class EventPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      //replace(this.#eventEditComponent, previousEventEditComponent);
       replace(this.#eventComponent, previousEventEditComponent);
       this.#mode = Mode.DEFAULT;
     }
@@ -128,7 +128,7 @@ export default class EventPresenter {
   }
 
   #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
+    if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#eventEditComponent.reset(this.#event);
       this.#replaceFormToEvent();
@@ -153,9 +153,6 @@ export default class EventPresenter {
       UpdateTypes.MINOR,
       event,
     );
-    //this.#replaceFormToEvent();
-    //После тестов решил убрать удаления обработчика, так как при ошибке отправки,форму трясет и она не закрывается
-    //document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleDeleteBtnClick = (event) => {

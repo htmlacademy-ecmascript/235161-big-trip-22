@@ -54,7 +54,6 @@ export default class EventsPresenter {
       onDestroy: onNewEventDestroy,
     });
 
-    //Подписываемся на изменения модели
     this.#eventsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -111,7 +110,6 @@ export default class EventsPresenter {
     this.#newEventPresenter.init();
   }
 
-  //Метод чтобы передать его в main и обработать отмену создания нового поинта при пустом массиве поинтов
   rerenderNoEventsComponent() {
     if (this.events.length === 0) {
       this.#renderNoEvents();
@@ -123,7 +121,6 @@ export default class EventsPresenter {
     this.#eventPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  //Обрабатываем изменения во вьюшках и модели
   #handleViewAction = async (actionType, updateType, update) => {
     this.#uiBlocker.block();
 
@@ -204,11 +201,9 @@ export default class EventsPresenter {
     if (this.#currentSortType === sortType) {
       return;
     }
-    // - Меняем активный тип сортировки
+
     this.#currentSortType = sortType;
-    // - Очищаем список
     this.#clearEventsBoard({resetSortType: false});
-    // - Рендерим доску с поинтами по новой
     this.#renderEventsBoard();
   };
 

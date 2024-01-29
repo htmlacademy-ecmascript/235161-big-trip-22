@@ -41,7 +41,6 @@ const newEventButtonComponent = new NewEventButtonView({
 
 function handleNewEventFormClose() {
   newEventButtonComponent.element.disabled = false;
-  //Это нужно чтобы рендерить надпись Click New Event Btn to add new event blabla если нет ивентов для рендера
   eventsPresenter.rerenderNoEventsComponent();
 }
 
@@ -56,7 +55,7 @@ eventsPresenter.init();
 eventsModel.init()
   .finally(() => {
     render(newEventButtonComponent, tripMain);
-    //Блокирую кнопку если по завершению инициализации данные не прогрузились
+
     if (eventsModel.offers.length === 0) {
       newEventButtonComponent.element.disabled = true;
     }

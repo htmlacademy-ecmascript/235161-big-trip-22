@@ -1,9 +1,5 @@
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
+function isEscapeKey(evt) {
+  return evt.key === 'Escape';
 }
 
-function getRandomNumber(min = 20, max = 999) {
-  return Math.floor(min + Math.random() * (max + 1 - min));
-}
-
-export {getRandomArrayElement, getRandomNumber};
+export {isEscapeKey};

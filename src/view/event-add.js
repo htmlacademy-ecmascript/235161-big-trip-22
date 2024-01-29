@@ -55,16 +55,6 @@ function createAvaliableOffersTemplate(eventTypeOffers, offers) {
 }
 
 function createOffersSectionTemplate(allOffers, checkedOffers, type) {
-  //if (allOffers.length === 0) {
-  /*return (
-      `<section class="event__section  event__section--offers">
-        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-        <div class="event__available-offers">
-        </div>
-      </section>`
-    );*/
-  //return '';
-  //}
 
   const eventTypeOffers = allOffers.find((offer) => offer.type === type);
 
@@ -204,9 +194,7 @@ export default class EventAddView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    //Новые штуки для состояния кнопок отправки/удаления
     delete this._state.isSaving;
-    //
     this.#handleFormSubmit(this._state);
   };
 
@@ -302,9 +290,6 @@ export default class EventAddView extends AbstractStatefulView {
       this.element.querySelector('.event__available-offers')
         .addEventListener('change', this.#offerChangeHandler);
     }
-    /*
-    this.element.querySelector('.event__available-offers')
-      .addEventListener('change', this.#offerChangeHandler);*/
 
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
