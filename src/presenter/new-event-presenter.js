@@ -1,5 +1,5 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
-import EventAddView from '../view/event-add.js';
+import EventAddView from '../view/event-add-view.js';
 import {UserActions, UpdateTypes} from '../const.js';
 import { isEscapeKey } from '../utils.js';
 

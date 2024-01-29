@@ -1,8 +1,8 @@
 import { render, replace, remove } from '../framework/render.js';
 import {UserActions, UpdateTypes} from '../const.js';
 import { isEscapeKey } from '../utils.js';
-import EventView from '../view/event.js';
-import EventEditView from '../view/event-edit.js';
+import EventView from '../view/event-view.js';
+import EventEditView from '../view/event-edit-view.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',

@@ -1,14 +1,14 @@
 import {render, remove, RenderPosition} from '../framework/render.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
-import EventsListView from '../view/events-list.js';
-import TripSortView from '../view/trip-sort.js';
+import EventsListView from '../view/events-list-view.js';
+import TripSortView from '../view/trip-sort-view.js';
 import EmptyView from '../view/empty-view.js';
 import LoadingView from '../view/loading-view.js';
 import EventPresenter from './event-presenter.js';
 import { FilterTypes, SortTypes, UserActions, UpdateTypes } from '../const.js';
 import { sortEventsByDay, sortEventsByPrice, sortEventsByDuration } from '../utils/event-utils.js';
 import {filter} from '../utils/filter-utils.js';
-import TripInfoView from '../view/trip-info.js';
+import TripInfoView from '../view/trip-info-view.js';
 import NewEventPresenter from './new-event-presenter.js';
 import PointsLoadErrorView from '../view/points-load-error-view.js';
 
@@ -47,10 +47,10 @@ export default class EventsPresenter {
     this.#filterModel = filterModel;
 
     this.#newEventPresenter = new NewEventPresenter({
-      eventListContainer: this.#eventListComponent.element,
-      offers: this.offers,
-      destinations: this.destinations,
-      onDataChange: this.#handleViewAction,
+      //eventListContainer: this.#eventListComponent.element,
+      //offers: [...this.#eventsModel.offers],
+      //destinations: [...this.#eventsModel.destinations],
+      //onDataChange: this.#handleViewAction,
       onDestroy: onNewEventDestroy,
     });
 

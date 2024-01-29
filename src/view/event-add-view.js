@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { EVENT_TYPES } from '../const.js';
-import {DateFormats} from '../utils/event-utils';
+import {DateFormats} from '../utils/event-utils.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import he from 'he';
