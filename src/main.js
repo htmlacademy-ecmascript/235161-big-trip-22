@@ -7,7 +7,7 @@ import { render } from './framework/render.js';
 import EventsApiService from './events-api-service.js';
 
 const AUTHORIZATION = 'Basic q1i2s3t4i5s12345';
-const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';//'https://22.objects.pages.academy/big-trip';
+const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
 
 const siteHeader = document.querySelector('.page-header');
 const tripMain = siteHeader.querySelector('.trip-main');
