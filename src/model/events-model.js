@@ -38,9 +38,6 @@ export default class EventsModel extends Observable {
 
       this._notify(UpdateTypes.INIT);
     } catch(err) {
-      //this.#offers = [];
-      //this.#destinations = [];
-      //this.#events = [];
       this._notify(UpdateTypes.POINTS_LOAD_ERROR);
     }
   }

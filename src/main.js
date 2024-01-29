@@ -7,7 +7,7 @@ import { render } from './framework/render.js';
 import EventsApiService from './events-api-service.js';
 
 const AUTHORIZATION = 'Basic q1i2s3t4i5s12345';
-const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';//'https://22.objects.pages.academy/big-trip';
+const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
 
 const siteHeader = document.querySelector('.page-header');
 const tripMain = siteHeader.querySelector('.trip-main');
@@ -41,7 +41,6 @@ const newEventButtonComponent = new NewEventButtonView({
 
 function handleNewEventFormClose() {
   newEventButtonComponent.element.disabled = false;
-  //Это нужно чтобы рендерить надпись Click New Event Btn to add new event blabla если нет ивентов для рендера
   eventsPresenter.rerenderNoEventsComponent();
 }
 
@@ -56,7 +55,7 @@ eventsPresenter.init();
 eventsModel.init()
   .finally(() => {
     render(newEventButtonComponent, tripMain);
-    //Блокирую кнопку если по завершению инициализации данные не прогрузились
+
     if (eventsModel.offers.length === 0) {
       newEventButtonComponent.element.disabled = true;
     }

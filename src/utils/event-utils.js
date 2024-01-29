@@ -36,19 +36,7 @@ function calculateDuration(startDate, endDate) {
     `${Math.floor(dayjs.duration(eventDuration).asDays())}D ${dayjs.duration(eventDuration).format('HH[H] mm[M]')}`
     : dayjs.duration(eventDuration).format(durationFormat);
 }
-/*
-function isEventInThePast(date) {
-  return date && dayjs(date).isBefore(dayjs(), 'D');
-}
 
-function isEventInThePresent(date) {
-  return date && dayjs(date).isSame(dayjs(), 'D');
-}
-
-function isEventInTheFuture(date) {
-  return date && dayjs(date).isAfter(dayjs(), 'D');
-}
-*/
 function getWeightForNullDate(dateA, dateB) {
   if (dateA === null && dateB === null) {
     return 0;
@@ -80,4 +68,4 @@ function sortEventsByDuration(eventA, eventB) {
   return eventDurationB - eventDurationA;
 }
 
-export {DateFormats, formatDate, calculateDuration, /*isEventInThePast, isEventInThePresent, isEventInTheFuture,*/ sortEventsByDay, sortEventsByPrice, sortEventsByDuration};
+export {DateFormats, formatDate, calculateDuration, sortEventsByDay, sortEventsByPrice, sortEventsByDuration};

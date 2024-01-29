@@ -49,7 +49,7 @@ export default class TripInfoView extends AbstractView {
     return this.#events.length > 1 ?
       `${formatDate(this.#events[0].dateFrom, DateFormats.MONTH_DAY)}&nbsp;&mdash;&nbsp;${formatDate(this.#events[this.#events.length - 1].dateTo, DateFormats.MONTH_DAY)}`
       :
-      `${formatDate(this.#events[0].dateFrom, DateFormats.MONTH_DAY)}`;
+      `${formatDate(this.#events[0].dateFrom, DateFormats.MONTH_DAY)}&nbsp;&mdash;&nbsp;${formatDate(this.#events[0].dateTo, DateFormats.MONTH_DAY)}`;
   }
 
   #calculatePrice() {

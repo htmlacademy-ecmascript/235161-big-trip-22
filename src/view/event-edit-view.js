@@ -168,10 +168,9 @@ export default class EventEditView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    //Новые штутки тут,для преключения состояния кнопок сохранить/удалить
     delete this._state.isSaving;
     delete this._state.isDeleting;
-    //
+
     this.#handleFormSubmit(this._state);
   };
 
