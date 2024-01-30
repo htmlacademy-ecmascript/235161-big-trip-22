@@ -32,21 +32,22 @@ function createOffersSectionTemplate(offers, eventChosenTypeOffers) {
 
 function createDestinationSectionTemplate(eventDestination) {
 
-  if (eventDestination.description === '' && eventDestination.pictures.length === 0) {
+  if (!eventDestination || eventDestination.description === '' && eventDestination.pictures.length === 0) {
     return '';
   }
 
-  return eventDestination ?
+  return (
     `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
       <p class="event__destination-description">${eventDestination ? eventDestination.description : ''}</p>
       ${eventDestination?.pictures.length !== 0 ? `<div class="event__photos-container">
       <div class="event__photos-tape">
       ${eventDestination ? eventDestination.pictures.map((picture) => (
-    `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)).join('') : ''}
+      `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)).join('') : ''}
       </div>
       </div>` : ''}
-    </section>` : '';
+    </section>`
+  );
 }
 
 function createEventEditTemplate(event, availableOffers, destinations) {
@@ -85,7 +86,7 @@ function createEventEditTemplate(event, availableOffers, destinations) {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" required value="${eventDestination ? he.encode(eventDestination.name) : ''}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${eventDestination ? he.encode(eventDestination.name) : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${destinations.map((element) => (`<option value="${element.name}"></option>`)).join('')}
           </datalist>
