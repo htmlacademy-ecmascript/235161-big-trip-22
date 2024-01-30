@@ -36,7 +36,7 @@ const filterPresenter = new FilterPresenter({
 });
 
 const newEventButtonComponent = new NewEventButtonView({
-  onClick: handleNewEventButtonClick
+  onNewEventBtnClick: handleNewEventButtonClick
 });
 
 function handleNewEventFormClose() {
