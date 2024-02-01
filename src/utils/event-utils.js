@@ -1,11 +1,11 @@
 import dayjs from 'dayjs';
 import Duration from 'dayjs/plugin/duration';
 
-dayjs.extend(Duration);
-
 const MILLISECONDS_AMOUNT_IN_DAY = 86400000;
 const MILLISECONDS_AMOUNT_IN_HOUR = 3600000;
 const MAX_DAYS_BEFORE_CONVERTING_INTO_MONTH = 29;
+
+dayjs.extend(Duration);
 
 const DateFormats = {
   DAY_MONTH: 'MMM D',
