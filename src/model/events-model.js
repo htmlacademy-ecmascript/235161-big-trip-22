@@ -60,7 +60,7 @@ export default class EventsModel extends Observable {
       ];
       this._notify(updateType, updatedEvent);
     } catch(err) {
-      throw new Error('Can\'t update task');
+      throw new Error('Can\'t update event');
     }
   }
 
@@ -71,7 +71,7 @@ export default class EventsModel extends Observable {
       this.#events = [newEvent, ...this.#events];
       this._notify(updateType, newEvent);
     } catch(err) {
-      throw new Error('Can\'t add task');
+      throw new Error('Can\'t add event');
     }
   }
 

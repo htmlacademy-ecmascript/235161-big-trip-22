@@ -54,13 +54,13 @@ export default class NewEventPresenter {
     this.#eventAddComponent.updateElement({
       isSaving: true,
     });
+    this.#eventAddComponent.element.querySelector('.event__save-btn').disabled = true;
   }
 
   setAborting() {
     const resetFormState = () => {
       this.#eventAddComponent.updateElement({
         isSaving: false,
-        isDeleting: false,
       });
     };
 
