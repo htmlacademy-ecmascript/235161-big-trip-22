@@ -295,7 +295,7 @@ export default class EventAddView extends AbstractStatefulView {
       .addEventListener('change', this.#destinationChangeHandler);
 
     this.element.querySelector('.event__input--price')
-      .addEventListener('input', this.#eventPriceChangeHandler);
+      .addEventListener('change', this.#eventPriceChangeHandler);
 
     this.element.querySelector('.event__reset-btn')
       .addEventListener('click', this.#formDeleteBtnClickHandler);
